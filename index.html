@@ -1,0 +1,2470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QB Low End Lineup — FY26 / FY27 Forecast</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      /* Intuit brand palette */
+      --blue:     #236CFF;
+      --blueFc:   #6699FF;
+      --teal:     #00A650;
+      --tealFc:   #4DBF84;
+      --red:      #D52B1E;
+      --redFc:    #F08080;
+      --purple:   #3B30C4;
+      --amber:    #E57A00;
+      --green:    #00A650;
+      --gray:     #6D7175;
+      --lel:      #236CFF;
+      --lelFc:    #6699FF;
+
+      /* Layout */
+      --bg:        #F0F2F5;
+      --bg-card:   #FFFFFF;
+      --card:      #FFFFFF;
+      --border:    #E2E5EA;
+      --text:      #1A1D23;
+      --muted:     #6D7175;
+      --navy:      #0B2B4E;
+      --navy-light: #1A3F66;
+      --shadow: 0 1px 2px rgba(0,0,0,.06);
+      --shadow-md: 0 2px 8px rgba(0,0,0,.08);
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Avenir Next', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* ── Header ── */
+    .site-header {
+      background: #0B2B4E;
+      color: #fff;
+      padding: 18px 32px 14px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .site-header h1 { margin: 0 0 3px; font-size: 20px; font-weight: 700; letter-spacing: -0.3px; color: #fff; }
+    .site-header .subtitle { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 1px; }
+    .sku-pills { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+    .pill {
+      font-size: 11px; font-weight: 600; padding: 2px 10px; border-radius: 99px;
+      letter-spacing: .3px;
+    }
+    .pill-qbse { background: rgba(213,43,30,0.2); color: #F08080; border: 1px solid rgba(213,43,30,0.4); }
+    .pill-qbsp { background: rgba(35,108,255,0.2); color: #B8D4FF; border: 1px solid rgba(35,108,255,0.4); }
+    .pill-lite { background: rgba(0,166,80,0.2); color: #4DBF84; border: 1px solid rgba(0,166,80,0.4); }
+    .header-meta { margin-left: auto; text-align: right; font-size: 12px; color: rgba(255,255,255,0.75); }
+
+    /* ── Tab Nav ── */
+    .tab-nav {
+      background: var(--navy);
+      display: flex;
+      gap: 2px;
+      padding: 0 32px;
+      overflow-x: auto;
+      border-bottom: none;
+    }
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: rgba(255,255,255,0.65);
+      padding: 12px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s;
+      white-space: nowrap;
+      font-family: inherit;
+      letter-spacing: 0.2px;
+    }
+    .tab-btn:hover {
+      color: #fff;
+      background: rgba(255,255,255,0.08);
+    }
+    .tab-btn.active {
+      color: #fff;
+      border-bottom: 3px solid #236CFF;
+      background: rgba(35,108,255,0.15);
+    }
+
+    /* ── Layout ── */
+    .container { max-width: 1280px; margin: 0 auto; padding: 24px 32px; }
+
+    .section { display: none; }
+    .section.active { display: block; }
+
+    /* ── Section header ── */
+    .section-header {
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-header h2 {
+      margin: 0 0 3px;
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--navy);
+      letter-spacing: -0.2px;
+    }
+    .section-header p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    /* ── KPI Cards ── */
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 24px; }
+    .kpi-card {
+      background: var(--bg-card);
+      border-radius: 6px;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+    }
+    .kpi-label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
+    .kpi-value { font-size: 26px; font-weight: 700; margin: 4px 0 2px; color: var(--navy); letter-spacing: -0.5px; }
+    .kpi-sub { font-size: 12px; color: var(--muted); }
+    .kpi-delta { font-size: 12px; font-weight: 600; }
+    .kpi-delta.pos { color: #00A650; }
+    .kpi-delta.neg { color: #D52B1E; }
+    .kpi-delta.warn { color: var(--amber); }
+
+    /* ── Charts + Tables ── */
+    .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+    .chart-row.wide { grid-template-columns: 1fr; }
+    @media (max-width: 900px) { .chart-row { grid-template-columns: 1fr; } }
+
+    .chart-card {
+      background: var(--bg-card);
+      border-radius: 6px;
+      padding: 16px 18px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      flex: 1;
+      min-width: 0;
+    }
+    .chart-card h3 { font-size: 11px; font-weight: 700; margin-bottom: 14px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.6px; }
+    .chart-card .chart-sub { font-size: 11px; color: var(--muted); margin-top: -10px; margin-bottom: 12px; }
+    .chart-wrap { position: relative; height: 240px; }
+
+    /* ── Tables ── */
+    .table-card {
+      background: var(--bg-card);
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      margin-bottom: 16px; overflow: hidden;
+    }
+    .table-card h3 { font-size: 11px; font-weight: 700; padding: 14px 18px 11px; border-bottom: 1px solid var(--border); color: var(--muted); text-transform: uppercase; letter-spacing: 0.6px; }
+    .table-scroll { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    thead th {
+      background: var(--navy); color: #fff; padding: 9px 12px; text-align: right;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+    thead th:first-child { text-align: left; }
+    tbody td { padding: 8px 12px; text-align: right; border-bottom: 1px solid #f0f4f8; white-space: nowrap; }
+    tbody td:first-child { text-align: left; font-weight: 500; }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover td { background: #fafbfc; }
+    .fy27-col { background: #F4F7FF !important; }
+    thead th.fy27-col { color: var(--navy) !important; }
+    .total-row td { font-weight: 700; background: #F6F7F9 !important; border-top: 1px solid var(--border); }
+    .actual-badge {
+      background: var(--navy);
+      color: #fff;
+      font-size: 9px;
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .fcst-badge {
+      background: var(--blue);
+      color: #fff;
+      font-size: 9px;
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .neg { color: #D52B1E; }
+    .pos { color: #00A650; }
+
+    /* ── Legend ── */
+    .legend { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 12px; }
+    .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+    .legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+
+    /* ── Badges ── */
+    .badge {
+      display: inline-block; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600;
+    }
+    .badge-high { background: #fee2e2; color: #991b1b; }
+    .badge-med { background: #fef3c7; color: #92400e; }
+    .badge-low { background: #f0fdf4; color: #166534; }
+    .badge-risk { background: #fee2e2; color: #991b1b; }
+    .badge-opp { background: #d1fae5; color: #065f46; }
+
+    /* ── Stacked channel table ── */
+    .initiative-row-baseline td { background: rgba(35,108,255,0.04) !important; }
+    .initiative-row-lite td { background: rgba(0,166,80,0.05) !important; }
+    .initiative-row-total td { font-weight: 700; background: rgba(11,43,78,0.07) !important; border-top: 1px solid #cbd5e1; }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <div>
+    <h1>QuickBooks Low End Lineup <span style="display:inline-block;margin-left:10px;padding:2px 10px;background:rgba(255,255,255,0.12);color:rgba(255,255,255,0.85);border-radius:4px;font-size:11px;font-weight:600;vertical-align:middle;letter-spacing:.4px;text-transform:uppercase">Target Pass 3</span></h1>
+    <p class="subtitle">FY26 &amp; FY27 Forecast Dashboard</p>
+    <div class="sku-pills">
+      <span class="pill pill-qbse">QBSE — Legacy (no new sales)</span>
+      <span class="pill pill-qbsp">QBSP — Stopping FY27</span>
+      <span class="pill pill-lite">QB Lite — New (replacing QBSP)</span>
+    </div>
+  </div>
+  <div class="header-meta">
+    Data: Google Sheets model<br>
+    <span id="updated-date"></span>
+  </div>
+</header>
+
+<nav class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab('lel')">Low End Lineup</button>
+  <button class="tab-btn" onclick="switchTab('qbsp')">QBSP + QB Lite</button>
+  <button class="tab-btn" onclick="switchTab('qbse')">QBSE</button>
+  <button class="tab-btn" onclick="switchTab('qbfree')">QB Free</button>
+  <button class="tab-btn" onclick="switchTab('ro')">Risks &amp; Opportunities</button>
+</nav>
+
+<!-- ═══════════════════════════════════════════════
+     TAB 1: LOW END LINEUP (COMBINED)
+═══════════════════════════════════════════════ -->
+<div id="tab-lel" class="section active">
+<div class="container">
+  <div class="section-header">
+    <h2>Low End Lineup — Combined View</h2>
+    <p>QBSE + QBSP + QB Lite combined. FY26 revenue is full year (Aug-25 through Jul-26). QB Lite FY27 revenue not yet modeled separately.</p>
+  </div>
+
+  <!-- Compact metric strip: 4 columns × 2 rows, grouped by metric type -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border-radius:10px;overflow:hidden;border:1px solid var(--border);margin-bottom:24px">
+
+    <!-- Row header labels -->
+    <div style="background:var(--bg);padding:8px 14px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);grid-column:1/-1;display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--border)">
+      <span>Subscribers</span><span>GNS</span><span>Attrition</span><span>Revenue</span>
+    </div>
+
+    <!-- FY26 row -->
+    <div style="background:#fff;padding:12px 14px">
+      <div style="font-size:10px;font-weight:600;color:var(--muted);margin-bottom:4px">FY26</div>
+      <div style="font-size:22px;font-weight:700;color:var(--blue);line-height:1">306K</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:3px">Jul-26 ending</div>
+    </div>
+    <div style="background:#fff;padding:12px 14px">
+      <div style="font-size:10px;font-weight:600;color:var(--muted);margin-bottom:4px">FY26</div>
+      <div style="font-size:22px;font-weight:700;color:var(--teal);line-height:1">97K</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:3px">QBSP+Lite+SE</div>
+    </div>
+    <div style="background:#fff;padding:12px 14px">
+      <div style="font-size:10px;font-weight:600;color:var(--muted);margin-bottom:4px">FY26</div>
+      <div style="font-size:22px;font-weight:700;color:var(--red);line-height:1">-131K</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:3px">SE -59K · SP -72K</div>
+    </div>
+    <div style="background:#fff;padding:12px 14px">
+      <div style="font-size:10px;font-weight:600;color:var(--muted);margin-bottom:4px">FY26</div>
+      <div style="font-size:22px;font-weight:700;color:var(--navy);line-height:1">~$83M</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:3px">All SKUs</div>
+    </div>
+
+    <!-- FY27 row -->
+    <div style="background:#F8FAFF;padding:12px 14px">
+      <div style="font-size:10px;font-weight:600;color:var(--muted);margin-bottom:4px">FY27 fcst</div>
+      <div style="font-size:22px;font-weight:700;color:var(--blue);line-height:1">353K</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:3px">Jul-27 ending</div>
+      <div style="font-size:11px;color:var(--teal);font-weight:600;margin-top:4px">+15% YoY</div>
+    </div>
+    <div style="background:#F8FAFF;padding:12px 14px">
+      <div style="font-size:10px;font-weight:600;color:var(--muted);margin-bottom:4px">FY27 fcst</div>
+      <div style="font-size:22px;font-weight:700;color:var(--teal);line-height:1">184K</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:3px">QBSP+Lite only</div>
+      <div style="font-size:11px;color:var(--teal);font-weight:600;margin-top:4px">+90% YoY</div>
+    </div>
+    <div style="background:#F8FAFF;padding:12px 14px">
+      <div style="font-size:10px;font-weight:600;color:var(--muted);margin-bottom:4px">FY27 fcst</div>
+      <div style="font-size:22px;font-weight:700;color:var(--red);line-height:1">-136K</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:3px">SE -39K · SP -97K</div>
+      <div style="font-size:11px;color:var(--red);font-weight:600;margin-top:4px">-4% more loss</div>
+    </div>
+    <div style="background:#F8FAFF;padding:12px 14px">
+      <div style="font-size:10px;font-weight:600;color:var(--muted);margin-bottom:4px">FY27 fcst</div>
+      <div style="font-size:22px;font-weight:700;color:var(--navy);line-height:1">~$72M</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:3px">QBSE+SP (Lite TBD)</div>
+      <div style="font-size:11px;color:var(--red);font-weight:600;margin-top:4px">-13% YoY</div>
+    </div>
+
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#00A650"></div>QBSP+Lite Subs</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#9CA3AF"></div>QBSE (legacy)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#236CFF"></div>Combined Subs</div>
+    <div class="legend-item" style="margin-left:16px;"><span style="border-bottom:2px solid #888;padding-bottom:1px;">—</span>&nbsp;FY26 Actuals</div>
+    <div class="legend-item"><span style="border-bottom:2px dashed #888;padding-bottom:1px;">- -</span>&nbsp;FY27 Forecast</div>
+  </div>
+
+  <div class="chart-row wide">
+    <div class="chart-card">
+      <h3>Total Subscribers — Low End Lineup (FY26 + FY27)</h3>
+      <p class="chart-sub">Combined QBSE + QBSP + QB Lite ending subscriber base by month</p>
+      <div class="chart-wrap"><canvas id="lel-subs-chart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="chart-row">
+    <div class="chart-card">
+      <h3>Monthly GNS — Combined LEL (by Channel)</h3>
+      <p class="chart-sub">QBSE GNS goes to zero in FY27 (no new sales). Validated against source spreadsheet.</p>
+      <div class="chart-wrap"><canvas id="lel-gns-chart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Net Cancellations / Attrition — by Channel</h3>
+      <p class="chart-sub">QBSP Direct vs Mobile cancellations + QBSE attrition. Note: QB Lite FY27 cancellations not yet modeled by channel.</p>
+      <div class="chart-wrap"><canvas id="lel-cancel-chart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="chart-row">
+    <div class="chart-card">
+      <h3>Monthly Revenue — Combined LEL ($)</h3>
+      <p class="chart-sub">QBSE + QBSP + QB Lite. Full year FY26 actuals (Aug-25 – Jul-26). Dashed/lighter = FY27 forecast.</p>
+      <div class="chart-wrap"><canvas id="lel-rev-chart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Revenue Mix — QBSE vs QBSP+Lite</h3>
+      <p class="chart-sub">QBSE dominates today but QBSP+Lite share grows as Lite scales</p>
+      <div class="chart-wrap"><canvas id="lel-rev-mix-chart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <h3>Low End Lineup — Monthly Subscriber Summary</h3>
+    <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          <th>Metric</th>
+          <th>Aug-25<br><span class="actual-badge">Act</span></th>
+          <th>Sep-25<br><span class="actual-badge">Act</span></th>
+          <th>Oct-25<br><span class="actual-badge">Act</span></th>
+          <th>Nov-25<br><span class="actual-badge">Act</span></th>
+          <th>Dec-25<br><span class="actual-badge">Act</span></th>
+          <th>Jan-26<br><span class="actual-badge">Act</span></th>
+          <th>Feb-26<br><span class="actual-badge">Act</span></th>
+          <th>Mar-26<br><span class="actual-badge">Act</span></th>
+          <th>Apr-26<br><span class="actual-badge">Act</span></th>
+          <th>May-26<br><span class="actual-badge">Act</span></th>
+          <th>Jun-26<br><span class="fcst-badge">Fcst</span></th>
+          <th>Jul-26<br><span class="fcst-badge">Fcst</span></th>
+          <th class="fy27-col">Aug-26<br><span class="fcst-badge">Fcst</span></th>
+          <th class="fy27-col">Sep-26<br><span class="fcst-badge">Fcst</span></th>
+          <th class="fy27-col">Oct-26<br><span class="fcst-badge">Fcst</span></th>
+          <th class="fy27-col">Nov-26<br><span class="fcst-badge">Fcst</span></th>
+          <th class="fy27-col">Dec-26<br><span class="fcst-badge">Fcst</span></th>
+          <th class="fy27-col">Jan-27<br><span class="fcst-badge">Fcst</span></th>
+          <th class="fy27-col">Feb-27<br><span class="fcst-badge">Fcst</span></th>
+          <th class="fy27-col">Mar-27<br><span class="fcst-badge">Fcst</span></th>
+          <th class="fy27-col">Apr-27<br><span class="fcst-badge">Fcst</span></th>
+          <th class="fy27-col">May-27<br><span class="fcst-badge">Fcst</span></th>
+          <th class="fy27-col">Jun-27<br><span class="fcst-badge">Fcst</span></th>
+          <th class="fy27-col">Jul-27<br><span class="fcst-badge">Fcst</span></th>
+        </tr>
+      </thead>
+      <tbody id="lel-sub-table-body"></tbody>
+    </table>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     TAB 3: QBSP + QB LITE
+═══════════════════════════════════════════════ -->
+<!-- ═══════════════════════════════════════════════
+     TAB 3: QBSP + QB LITE
+═══════════════════════════════════════════════ -->
+<div id="tab-qbsp" class="section">
+<div class="container">
+  <div class="section-header">
+    <h2>QBSP + QB Lite — Combined &amp; Split</h2>
+    <p>QB Lite launched Feb-26 with actuals through Jun-26. QBSP has actuals Aug-25 through Jun-26 plus Dec-25 and Jan-26 included from plan. FY27 split per transition plan. Jul-26 and all FY27 are forecast.</p>
+  </div>
+
+  <!-- QBSP Key Assumptions callout -->
+  <div style="background:#F8FAFF;border-left:3px solid var(--blue);border-radius:0 6px 6px 0;padding:12px 16px;margin-bottom:20px;font-size:12px;color:var(--navy);line-height:1.7">
+    <div style="font-weight:700;font-size:10px;letter-spacing:.6px;text-transform:uppercase;color:var(--blue);margin-bottom:6px">Key Assumptions — TP3 Adjustments over Baseline</div>
+    <ul style="margin:0;padding-left:16px">
+      <li><strong>No price increase</strong> for QBSP or QB Lite in FY27.</li>
+      <li><strong>Aug-27 promo:</strong> 90% off for first 3 months (GNS driver for Digital/Web channel).</li>
+      <li><strong>Pricing:</strong> List price <strong>$20/mo</strong> ($240/yr). ARPC will be lower than list due to discount promos (Aug 90% off, Mobile 70% off cohorts). ARPC calculation follows same methodology as QBSE: Annual Revenue ÷ Avg Monthly Subs.</li>
+      <li><strong>Retention saves from Freemium:</strong> 10K at-risk QBSP/Lite subs offered QB Free downgrade — expected to reduce net cancellations by holding at-risk customers in the ecosystem.</li>
+      <li><strong>Retention curves refreshed</strong> for QBSP in TP3 to reflect latest trend — lower churn in core digital cohorts offset by elevated churn from E3B transition.</li>
+    </ul>
+  </div>
+
+  <!-- Headline KPIs: QBSP + QB Lite — compact table matching LEL format -->
+  <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--border);border-radius:10px;overflow:hidden;border:1px solid var(--border);margin-bottom:24px">
+    <div style="background:var(--bg);padding:8px 14px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);grid-column:1/-1;display:grid;grid-template-columns:repeat(5,1fr);border-bottom:1px solid var(--border)">
+      <span>Subscribers</span><span>GNS</span><span>Attrition</span><span>Revenue</span><span>Avg Monthly Churn</span>
+    </div>
+    <div style="background:#fff;padding:12px 14px">
+      <div style="font-size:10px;font-weight:600;color:var(--muted);margin-bottom:4px">FY26</div>
+      <div style="font-size:22px;font-weight:700;color:var(--blue);line-height:1">98K</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:3px">Jul-26: SP 92K + Lite 6K</div>
+    </div>
+    <div style="background:#fff;padding:12px 14px">
+      <div style="font-size:10px;font-weight:600;color:var(--muted);margin-bottom:4px">FY26</div>
+      <div style="font-size:22px;font-weight:700;color:var(--teal);line-height:1">95K</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:3px">11-mo actuals + Jul fcst</div>
+    </div>
+    <div style="background:#fff;padding:12px 14px">
+      <div style="font-size:10px;font-weight:600;color:var(--muted);margin-bottom:4px">FY26</div>
+      <div style="font-size:22px;font-weight:700;color:var(--red);line-height:1">-72K</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:3px">QBSP cancellations</div>
+    </div>
+    <div style="background:#fff;padding:12px 14px">
+      <div style="font-size:10px;font-weight:600;color:var(--muted);margin-bottom:4px">FY26</div>
+      <div style="font-size:22px;font-weight:700;color:var(--navy);line-height:1">~$15.6M</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:3px">Full year</div>
+    </div>
+    <div style="background:#fff;padding:12px 14px">
+      <div style="font-size:10px;font-weight:600;color:var(--muted);margin-bottom:4px">FY26</div>
+      <div style="font-size:22px;font-weight:700;color:var(--amber);line-height:1">-6.9%</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:3px">Avg monthly (QBSP)</div>
+      <div style="font-size:11px;color:var(--amber);font-weight:600;margin-top:4px">~58% annual</div>
+    </div>
+    <div style="background:#F8FAFF;padding:12px 14px">
+      <div style="font-size:10px;font-weight:600;color:var(--muted);margin-bottom:4px">FY27 fcst</div>
+      <div style="font-size:22px;font-weight:700;color:var(--blue);line-height:1">179K</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:3px">SP 70K + Lite 109K</div>
+      <div style="font-size:11px;color:var(--teal);font-weight:600;margin-top:4px">+83% YoY</div>
+    </div>
+    <div style="background:#F8FAFF;padding:12px 14px">
+      <div style="font-size:10px;font-weight:600;color:var(--muted);margin-bottom:4px">FY27 fcst</div>
+      <div style="font-size:22px;font-weight:700;color:var(--teal);line-height:1">184K</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:3px">Per transition plan</div>
+      <div style="font-size:11px;color:var(--teal);font-weight:600;margin-top:4px">+94% YoY</div>
+    </div>
+    <div style="background:#F8FAFF;padding:12px 14px">
+      <div style="font-size:10px;font-weight:600;color:var(--muted);margin-bottom:4px">FY27 fcst</div>
+      <div style="font-size:22px;font-weight:700;color:var(--red);line-height:1">-97K</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:3px">As base grows</div>
+      <div style="font-size:11px;color:var(--red);font-weight:600;margin-top:4px">+35% more loss</div>
+    </div>
+    <div style="background:#F8FAFF;padding:12px 14px">
+      <div style="font-size:10px;font-weight:600;color:var(--muted);margin-bottom:4px">FY27 fcst</div>
+      <div style="font-size:22px;font-weight:700;color:var(--navy);line-height:1">~$17M</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:3px">Growing with new subs</div>
+      <div style="font-size:11px;color:var(--teal);font-weight:600;margin-top:4px">+9% YoY</div>
+    </div>
+    <div style="background:#F8FAFF;padding:12px 14px">
+      <div style="font-size:10px;font-weight:600;color:var(--muted);margin-bottom:4px">FY27 fcst</div>
+      <div style="font-size:22px;font-weight:700;color:var(--amber);line-height:1">-5.9%</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:3px">Avg monthly (combined)</div>
+      <div style="font-size:11px;color:var(--amber);font-weight:600;margin-top:4px">~52% annual</div>
+    </div>
+  </div>
+
+  <!-- Charts row 1 -->
+  <div class="chart-row">
+    <div class="chart-card">
+      <h3>Monthly GNS — QBSP vs QB Lite (Stacked)</h3>
+      <p class="chart-sub">Solid = actuals/realized, lighter = forecast. QB Lite launched Feb-26; Jul-26 and FY27 are forecast.</p>
+      <div class="chart-wrap"><canvas id="qbsp-gns-chart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Subscribers — QBSP vs QB Lite</h3>
+      <p class="chart-sub">FY26: actuals. FY27: interpolated from quarterly model endpoints (~). Lite crosses QBSP in Q3 FY27.</p>
+      <div class="chart-wrap"><canvas id="qbsp-subs-chart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Charts row 2 -->
+  <div class="chart-row">
+    <div class="chart-card">
+      <h3>QBSP Churn Rate — Direct vs Mobile (%)</h3>
+      <p class="chart-sub">Mobile (App Store) is consistently ~2× Direct. Direct improves +0.4pp in FY27; Mobile is flat-to-slightly-elevated as base grows.</p>
+      <div class="chart-wrap"><canvas id="qbsp-churn-chart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Net Cancellations — Direct vs Mobile</h3>
+      <p class="chart-sub">Mobile drives majority of cancellations. Growing in FY27 as subscriber base scales.</p>
+      <div class="chart-wrap"><canvas id="qbsp-cancel-chart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- ── FY27 GNS Build (Waterfall) ── -->
+  <div class="section-header" style="margin-top:32px;padding-top:24px;border-top:1px solid var(--border)">
+    <h2>FY27 GNS Build — From Baseline to Total</h2>
+    <p>FY26 GNS anchor → FY27 Baseline by channel → each initiative by magnitude. Colors = channel. Click a bar for detail.</p>
+  </div>
+
+  <div class="chart-card chart-row wide">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;flex-wrap:wrap;gap:8px">
+      <div style="display:flex;gap:16px;flex-wrap:wrap">
+        <span style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--muted)"><span style="width:12px;height:12px;border-radius:2px;background:#236CFF;display:inline-block"></span>Web / Digital-led</span>
+        <span style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--muted)"><span style="width:12px;height:12px;border-radius:2px;background:#3B30C4;display:inline-block"></span>Mobile-led</span>
+        <span style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--muted)"><span style="width:12px;height:12px;border-radius:2px;background:#E57A00;display:inline-block"></span>Partnerships</span>
+        <span style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--muted)"><span style="width:12px;height:12px;border-radius:2px;background:#0B2B4E;display:inline-block"></span>FY27 Total</span>
+      </div>
+      <span style="font-size:11px;color:var(--muted);font-style:italic">Click a bar for channel breakdown</span>
+    </div>
+    <div class="chart-wrap" style="height:340px"><canvas id="gns-waterfall-chart"></canvas></div>
+    <!-- Breakdown callout panel -->
+    <div id="gns-waterfall-detail" style="display:none;margin-top:12px;padding:12px 16px;border-radius:6px;background:#F8F9FB;border:1px solid var(--border);font-size:12px">
+      <div style="font-weight:700;color:var(--navy);margin-bottom:8px" id="gns-detail-title"></div>
+      <div id="gns-detail-body" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px"></div>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <h3>FY27 GNS Build — By Initiative and Channel (Pass 3)</h3>
+    <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          <th>Channel</th><th>Initiative</th><th>SKU</th>
+          <th class="fy27-col">Q1</th><th class="fy27-col">Q2</th>
+          <th class="fy27-col">Q3</th><th class="fy27-col">Q4</th>
+          <th class="fy27-col">FY27</th>
+        </tr>
+      </thead>
+      <tbody id="gns-build-table-body"></tbody>
+    </table>
+    </div>
+  </div>
+
+  <!-- Transition Summary (moved to bottom) -->
+  <div class="table-card" style="margin-top:8px">
+    <h3>Transition Plan — When Does Majority of GNS Switch to QB Lite?</h3>
+    <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          <th style="text-align:left">Channel</th>
+          <th>Switch Start</th>
+          <th>QBSP% at Switch</th>
+          <th>Lite% at Switch</th>
+          <th>Fully Transitioned</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="text-align:left;font-weight:500">Digital / Web</td><td style="color:var(--teal);font-weight:700">Feb-26</td><td>2%</td><td>98%</td><td>Aug: 20/80 → Sep: 15/85 → Oct: 10/90 → Nov+: 2/98</td></tr>
+        <tr><td style="text-align:left;font-weight:500">Mobile (App Store)</td><td style="color:var(--teal);font-weight:700">Aug-26</td><td>10%</td><td>90%</td><td>Q3 FY27</td></tr>
+        <tr><td style="text-align:left;font-weight:500">External Partnerships</td><td style="color:var(--teal);font-weight:700">Aug-26</td><td>10%</td><td>90%</td><td>Q3 FY27</td></tr>
+        <tr><td style="text-align:left;font-weight:500">Internal Partners (E3B)</td><td style="color:var(--teal);font-weight:700">Aug-26</td><td>0%</td><td>100%</td><td>Q3 FY27 (complete flip)</td></tr>
+        <tr><td style="text-align:left;font-weight:500">Accountant</td><td style="color:var(--muted);font-weight:700">N/A</td><td>0%</td><td>0%</td><td>Accountant channel sunset Q2 FY27</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <!-- Churn summary callout (monthly + annual) -->
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border-radius:10px;overflow:hidden;border:1px solid var(--border);margin-bottom:12px">
+    <div style="background:var(--bg);padding:8px 14px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid var(--border)">
+      <span>QBSP Churn — FY26</span><span>QBSP+Lite Churn — FY27</span><span>Note</span>
+    </div>
+    <div style="background:#fff;padding:12px 14px">
+      <div style="font-size:22px;font-weight:700;color:var(--amber);line-height:1">-6.9%</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:3px">Avg monthly</div>
+      <div style="font-size:11px;color:var(--amber);font-weight:600;margin-top:4px">~58% annual</div>
+    </div>
+    <div style="background:#fff;padding:12px 14px">
+      <div style="font-size:22px;font-weight:700;color:var(--amber);line-height:1">-5.9%</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:3px">Avg monthly (combined)</div>
+      <div style="font-size:11px;color:var(--amber);font-weight:600;margin-top:4px">~52% annual</div>
+    </div>
+    <div style="background:#fff;padding:12px 14px;font-size:11px;color:var(--muted);line-height:1.5">
+      Monthly detail in table below.<br>Annual = 1−(1+monthly)¹².<br>FY27 elevated by E3B migration.
+    </div>
+  </div>
+
+  <!-- Monthly Detail (moved to bottom) -->
+  <div class="table-card" style="margin-top:8px">
+    <h3>QBSP &amp; QB Lite — Monthly Detail</h3>
+    <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          <th>SKU / Metric</th>
+          <th>Aug-25<br><span class="actual-badge">Act</span></th>
+          <th>Sep-25<br><span class="actual-badge">Act</span></th>
+          <th>Oct-25<br><span class="actual-badge">Act</span></th>
+          <th>Nov-25<br><span class="actual-badge">Act</span></th>
+          <th>Dec-25*<br><span class="actual-badge">Deriv</span></th>
+          <th>Jan-26*<br><span class="actual-badge">Deriv</span></th>
+          <th>Feb-26<br><span class="actual-badge">Act</span></th>
+          <th>Mar-26<br><span class="actual-badge">Act</span></th>
+          <th>Apr-26<br><span class="actual-badge">Act</span></th>
+          <th>May-26<br><span class="actual-badge">Act</span></th>
+          <th>Jun-26<br><span class="actual-badge">Act</span></th>
+          <th>Jul-26<br><span class="fcst-badge">Fcst</span></th>
+          <th class="fy27-col">Aug-26<br><span class="fcst-badge">Fcst</span></th>
+          <th class="fy27-col">Sep-26<br><span class="fcst-badge">Fcst</span></th>
+          <th class="fy27-col">Oct-26<br><span class="fcst-badge">Fcst</span></th>
+          <th class="fy27-col">Nov-26<br><span class="fcst-badge">Fcst</span></th>
+          <th class="fy27-col">Dec-26<br><span class="fcst-badge">Fcst</span></th>
+          <th class="fy27-col">Jan-27<br><span class="fcst-badge">Fcst</span></th>
+          <th class="fy27-col">Feb-27<br><span class="fcst-badge">Fcst</span></th>
+          <th class="fy27-col">Mar-27<br><span class="fcst-badge">Fcst</span></th>
+          <th class="fy27-col">Apr-27<br><span class="fcst-badge">Fcst</span></th>
+          <th class="fy27-col">May-27<br><span class="fcst-badge">Fcst</span></th>
+          <th class="fy27-col">Jun-27<br><span class="fcst-badge">Fcst</span></th>
+          <th class="fy27-col">Jul-27<br><span class="fcst-badge">Fcst</span></th>
+          <th style="background:#eef0f5;font-style:italic;font-size:10px">FY26 Avg/Σ</th>
+          <th class="fy27-col" style="font-style:italic;font-size:10px">FY27 Avg/Σ</th>
+        </tr>
+      </thead>
+      <tbody id="qbsp-table-body"></tbody>
+    </table>
+    <div style="font-size:11px;color:var(--muted);padding:8px 12px">* Dec-25/Jan-26 derived (Lite not yet live). ~ FY27 subs interpolated from quarterly endpoints. QB Lite FY27 cancellations/revenue not yet modeled separately.</div>
+    </div>
+  </div>
+</div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════
+     TAB 2: QBSE
+═══════════════════════════════════════════════ -->
+<div id="tab-qbse" class="section">
+<div class="container">
+  <div class="section-header">
+    <h2>QBSE — Legacy SKU</h2>
+    <p>No new sales in FY27. Subscriber base declining through attrition. FY26 is actuals; FY27 is forecast.</p>
+  </div>
+
+  <!-- QBSE Key Assumptions callout -->
+  <div style="background:#F8FAFF;border-left:3px solid var(--blue);border-radius:0 6px 6px 0;padding:12px 16px;margin-bottom:20px;font-size:12px;color:var(--navy);line-height:1.7">
+    <div style="font-weight:700;font-size:10px;letter-spacing:.6px;text-transform:uppercase;color:var(--blue);margin-bottom:6px">Key Assumptions — TP3 Adjustments over Baseline</div>
+    <ul style="margin:0;padding-left:16px">
+      <li><strong>Trend continuation:</strong> Continued decline at existing trend rate — no new sales, no marketing support. Retention curves refreshed in TP3 to reflect latest trend.</li>
+      <li><strong>Attrition dynamics:</strong> As base becomes smaller, net attrition declines in absolute terms. Larger seasonal dips expected in May (historically high-churn month).</li>
+      <li><strong>Pricing:</strong> List price <strong>$25/mo</strong> ($300/yr). ARPC FY26: <strong>$279/yr</strong> ($23.26/mo) — reflects mix of legacy discounts and promos. ARPC FY27: <strong>$255/yr</strong> ($21.26/mo) — declining as higher-ARPC subs churn first.</li>
+    </ul>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border-radius:10px;overflow:hidden;border:1px solid var(--border);margin-bottom:24px">
+    <div style="background:var(--bg);padding:8px 14px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);grid-column:1/-1;display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--border)">
+      <span>Subscribers</span><span>Avg Monthly Churn</span><span>Attrition</span><span>Revenue</span>
+    </div>
+    <div style="background:#fff;padding:12px 14px">
+      <div style="font-size:10px;font-weight:600;color:var(--muted);margin-bottom:4px">FY26</div>
+      <div style="font-size:22px;font-weight:700;color:var(--blue);line-height:1">213K</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:3px">Jul-26 ending</div>
+    </div>
+    <div style="background:#fff;padding:12px 14px">
+      <div style="font-size:10px;font-weight:600;color:var(--muted);margin-bottom:4px">FY26</div>
+      <div style="font-size:22px;font-weight:700;color:var(--amber);line-height:1">-1.9%</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:3px">Avg monthly</div>
+      <div style="font-size:11px;color:var(--amber);font-weight:600;margin-top:4px">~20% annual</div>
+    </div>
+    <div style="background:#fff;padding:12px 14px">
+      <div style="font-size:10px;font-weight:600;color:var(--muted);margin-bottom:4px">FY26</div>
+      <div style="font-size:22px;font-weight:700;color:var(--red);line-height:1">-59K</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:3px">Full year</div>
+    </div>
+    <div style="background:#fff;padding:12px 14px">
+      <div style="font-size:10px;font-weight:600;color:var(--muted);margin-bottom:4px">FY26</div>
+      <div style="font-size:22px;font-weight:700;color:var(--navy);line-height:1">~$67M</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:3px">Full year</div>
+    </div>
+    <div style="background:#F8FAFF;padding:12px 14px">
+      <div style="font-size:10px;font-weight:600;color:var(--muted);margin-bottom:4px">FY27 fcst</div>
+      <div style="font-size:22px;font-weight:700;color:var(--blue);line-height:1">174K</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:3px">Jul-27 ending</div>
+      <div style="font-size:11px;color:var(--red);font-weight:600;margin-top:4px">-18% YoY</div>
+    </div>
+    <div style="background:#F8FAFF;padding:12px 14px">
+      <div style="font-size:10px;font-weight:600;color:var(--muted);margin-bottom:4px">FY27 fcst</div>
+      <div style="font-size:22px;font-weight:700;color:var(--teal);line-height:1">-1.6%</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:3px">Avg monthly · improving</div>
+      <div style="font-size:11px;color:var(--teal);font-weight:600;margin-top:4px">~17% annual</div>
+    </div>
+    <div style="background:#F8FAFF;padding:12px 14px">
+      <div style="font-size:10px;font-weight:600;color:var(--muted);margin-bottom:4px">FY27 fcst</div>
+      <div style="font-size:22px;font-weight:700;color:var(--red);line-height:1">-39K</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:3px">Slowing as base shrinks</div>
+      <div style="font-size:11px;color:var(--teal);font-weight:600;margin-top:4px">-34% fewer lost</div>
+    </div>
+    <div style="background:#F8FAFF;padding:12px 14px">
+      <div style="font-size:10px;font-weight:600;color:var(--muted);margin-bottom:4px">FY27 fcst</div>
+      <div style="font-size:22px;font-weight:700;color:var(--navy);line-height:1">~$49M</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:3px">Declining with base</div>
+      <div style="font-size:11px;color:var(--red);font-weight:600;margin-top:4px">-27% YoY</div>
+    </div>
+  </div>
+
+  <div class="chart-row">
+    <div class="chart-card">
+      <h3>QBSE Subscribers &amp; Attrition</h3>
+      <p class="chart-sub">Steady decline; no new GNS in FY27</p>
+      <div class="chart-wrap"><canvas id="qbse-subs-chart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Monthly Churn Rate (%)</h3>
+      <p class="chart-sub">FY26 actuals vs FY27 forecast — improving trend as high-churn cohorts exit</p>
+      <div class="chart-wrap"><canvas id="qbse-churn-chart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="chart-row">
+    <div class="chart-card">
+      <h3>QBSE Monthly Revenue ($)</h3>
+      <p class="chart-sub">Full year FY26 actuals (Aug-25 – Jul-26). FY27 forecast.</p>
+      <div class="chart-wrap"><canvas id="qbse-rev-chart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>QBSE Monthly Attrition</h3>
+      <p class="chart-sub">Absolute attrition declining; churn % also improving</p>
+      <div class="chart-wrap"><canvas id="qbse-attrit-chart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <h3>QBSE — Monthly Detail</h3>
+    <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          <th>Metric</th>
+          <th>Aug-25<br><span class="actual-badge">Act</span></th>
+          <th>Sep-25<br><span class="actual-badge">Act</span></th>
+          <th>Oct-25<br><span class="actual-badge">Act</span></th>
+          <th>Nov-25<br><span class="actual-badge">Act</span></th>
+          <th>Dec-25<br><span class="actual-badge">Act</span></th>
+          <th>Jan-26<br><span class="actual-badge">Act</span></th>
+          <th>Feb-26<br><span class="actual-badge">Act</span></th>
+          <th>Mar-26<br><span class="actual-badge">Act</span></th>
+          <th>Apr-26<br><span class="actual-badge">Act</span></th>
+          <th>May-26<br><span class="actual-badge">Act</span></th>
+          <th>Jun-26<br><span class="actual-badge">Act</span></th>
+          <th>Jul-26<br><span class="actual-badge">Act</span></th>
+          <th class="fy27-col">Aug-26<br><span class="fcst-badge">Fcst</span></th>
+          <th class="fy27-col">Sep-26<br><span class="fcst-badge">Fcst</span></th>
+          <th class="fy27-col">Oct-26<br><span class="fcst-badge">Fcst</span></th>
+          <th class="fy27-col">Nov-26<br><span class="fcst-badge">Fcst</span></th>
+          <th class="fy27-col">Dec-26<br><span class="fcst-badge">Fcst</span></th>
+          <th class="fy27-col">Jan-27<br><span class="fcst-badge">Fcst</span></th>
+          <th class="fy27-col">Feb-27<br><span class="fcst-badge">Fcst</span></th>
+          <th class="fy27-col">Mar-27<br><span class="fcst-badge">Fcst</span></th>
+          <th class="fy27-col">Apr-27<br><span class="fcst-badge">Fcst</span></th>
+          <th class="fy27-col">May-27<br><span class="fcst-badge">Fcst</span></th>
+          <th class="fy27-col">Jun-27<br><span class="fcst-badge">Fcst</span></th>
+          <th class="fy27-col">Jul-27<br><span class="fcst-badge">Fcst</span></th>
+          <th style="background:#eef0f5;font-style:italic;font-size:10px">FY26 Avg</th>
+          <th class="fy27-col" style="font-style:italic;font-size:10px">FY27 Avg</th>
+        </tr>
+      </thead>
+      <tbody id="qbse-table-body"></tbody>
+    </table>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     TAB: QB FREE
+═══════════════════════════════════════════════ -->
+<div id="tab-qbfree" class="section">
+<div class="container">
+
+  <div class="section-header">
+    <h2>QB Free — FY27 Forecast</h2>
+    <p>Freemium tier launching Aug-26. 1M signup target; GNS via Free-to-Paid conversion. Numbers reflect TP3 targets and Jul-15 revised assumptions.</p>
+  </div>
+
+  <!-- Links strip -->
+  <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px">
+    <a href="https://claude.ai/artifacts/latest/00af622e-3cb0-42b1-8e14-85001974e98b" target="_blank"
+       style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:var(--blue);color:#fff;border-radius:20px;font-size:12px;font-weight:600;text-decoration:none">
+      ↗ Pacing Model
+    </a>
+    <a href="https://docs.google.com/document/d/1XMDyb07eNd-zb9Y2qVP6g6XEqqOlysEcKJgpvodkMvE/edit?usp=drive_open&ouid=114087142870224181938" target="_blank"
+       style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:#fff;color:var(--navy);border:1.5px solid var(--border);border-radius:20px;font-size:12px;font-weight:600;text-decoration:none">
+      ↗ Target Assumptions Doc
+    </a>
+  </div>
+
+  <!-- Key Assumptions callout -->
+  <div style="background:#F8FAFF;border-left:3px solid var(--blue);border-radius:0 6px 6px 0;padding:12px 16px;margin-bottom:20px;font-size:12px;color:var(--navy);line-height:1.6">
+    <div style="font-weight:700;font-size:10px;letter-spacing:.6px;text-transform:uppercase;color:var(--blue);margin-bottom:6px">Key Assumptions — TP3</div>
+    <ul style="margin:0;padding-left:16px">
+      <li><strong>1M signups:</strong> 100% web traffic exposure, Mobile App launch Aug-26, $20M paid media at $200 CPA. <em>Jul-15 update: Digital web underperforming — scaling to $30M (+$10M at $300 CPA).</em></li>
+      <li><strong>Monetization:</strong> 18% gross / 10% net Free-to-Paid rate. 7% cannibalization baked in. SKU mix 50% Low End ($15/mo) / 50% Core ($95/mo).</li>
+      <li><strong>In-year retention:</strong> Core 85%, Low end 65% → 57K net paid subs from 75K GNS adds. Payments GNA: 34K at 3.4% attach rate → 8.5K active merchants at year-end → $2M revenue.</li>
+      <li><strong>Retention saves:</strong> 105K at-risk subs offered Free downgrade → 9K re-subscribe to paid (8.5% reactivation).</li>
+      <li><strong style="color:var(--red)">Jul-15 risk:</strong> Digital GNS reduced 50K → 18K (−32K) due to web test underperformance. Net revised target: <strong>57K GNS</strong> — leaving an ~18K gap vs 75K plan. Low-confidence bets account for 15K of gap fill.</li>
+    </ul>
+  </div>
+
+  <!-- KPI compact table -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border-radius:10px;overflow:hidden;border:1px solid var(--border);margin-bottom:24px">
+    <div style="background:var(--bg);padding:8px 14px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);grid-column:1/-1;display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--border)">
+      <span>Free Signups</span><span>GNS (F2P)</span><span>GNA (Payments)</span><span>Revenue</span>
+    </div>
+    <div style="background:#fff;padding:12px 14px">
+      <div style="font-size:10px;font-weight:600;color:var(--muted);margin-bottom:4px">FY26</div>
+      <div style="font-size:22px;font-weight:700;color:var(--blue);line-height:1">70K</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:3px">Baseline actuals</div>
+    </div>
+    <div style="background:#fff;padding:12px 14px">
+      <div style="font-size:10px;font-weight:600;color:var(--muted);margin-bottom:4px">FY26</div>
+      <div style="font-size:22px;font-weight:700;color:var(--teal);line-height:1">6K</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:3px">F2P conversions</div>
+    </div>
+    <div style="background:#fff;padding:12px 14px">
+      <div style="font-size:10px;font-weight:600;color:var(--muted);margin-bottom:4px">FY26</div>
+      <div style="font-size:22px;font-weight:700;color:var(--navy);line-height:1">5.8K</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:3px">4.3% of signups (YTD)</div>
+    </div>
+    <div style="background:#fff;padding:12px 14px">
+      <div style="font-size:10px;font-weight:600;color:var(--muted);margin-bottom:4px">FY26</div>
+      <div style="font-size:22px;font-weight:700;color:var(--navy);line-height:1">—</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:3px">Not modeled</div>
+    </div>
+    <div style="background:#F8FAFF;padding:12px 14px">
+      <div style="font-size:10px;font-weight:600;color:var(--muted);margin-bottom:4px">FY27 target</div>
+      <div style="font-size:22px;font-weight:700;color:var(--blue);line-height:1">929K</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:3px">TP3 model (Yash)</div>
+      <div style="font-size:11px;color:var(--teal);font-weight:600;margin-top:4px">74K MAU by Jul-27</div>
+    </div>
+    <div style="background:#F8FAFF;padding:12px 14px">
+      <div style="font-size:10px;font-weight:600;color:var(--muted);margin-bottom:4px">FY27 target</div>
+      <div style="font-size:22px;font-weight:700;color:var(--teal);line-height:1">75K</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:3px">TP3 plan target</div>
+      <div style="font-size:11px;color:var(--muted);font-weight:600;margin-top:4px">Model: 63.9K (Ryan)</div>
+    </div>
+    <div style="background:#F8FAFF;padding:12px 14px">
+      <div style="font-size:10px;font-weight:600;color:var(--muted);margin-bottom:4px">FY27 target</div>
+      <div style="font-size:22px;font-weight:700;color:var(--navy);line-height:1">33K</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:3px">GNA model (David)</div>
+      <div style="font-size:11px;color:var(--teal);font-weight:600;margin-top:4px">3.4% attach rate</div>
+    </div>
+    <div style="background:#F8FAFF;padding:12px 14px">
+      <div style="font-size:10px;font-weight:600;color:var(--muted);margin-bottom:4px">FY27 target</div>
+      <div style="font-size:22px;font-weight:700;color:var(--navy);line-height:1">~$15M</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:3px">GNS $13M + Pmts $2M</div>
+      <div style="font-size:11px;color:var(--muted);font-weight:600;margin-top:4px">In-progress</div>
+    </div>
+  </div>
+
+  <!-- Single combined chart: all 4 metrics -->
+  <div class="chart-card wide" style="margin-bottom:8px">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px">
+      <div>
+        <h3 style="font-size:13px;font-weight:700;color:var(--navy);margin:0 0 2px">QB Free — Monthly Forecast (Target Pass 3)</h3>
+        <p style="font-size:11px;color:var(--muted);margin:0"><span style="color:#236CFF;font-weight:600">Left axis (blue):</span> Monthly signups (bars) &nbsp;·&nbsp; <span style="color:#00A650;font-weight:600">Right axis (green):</span> GNS (fill) + GNA (dashed) · Tooltip shows GNS/Signup conv. rate · MAU in table below</p>
+      </div>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--muted);align-items:center">
+        <span style="display:flex;align-items:center;gap:4px"><span style="width:22px;height:3px;background:#236CFF;border-radius:2px;display:inline-block"></span>Signups</span>
+        <span style="display:flex;align-items:center;gap:4px"><span style="width:22px;height:3px;background:#00A650;border-radius:2px;display:inline-block"></span>GNS</span>
+        <span style="display:flex;align-items:center;gap:4px"><span style="width:22px;height:3px;background:#3B30C4;border-radius:2px;display:inline-block"></span>GNA</span>
+        <span style="display:flex;align-items:center;gap:4px"><span style="width:22px;height:3px;background:#E57A00;border-radius:2px;display:inline-block"></span>MAU</span>
+      </div>
+    </div>
+    <div class="chart-wrap" style="height:300px"><canvas id="qbfree-combined-chart"></canvas></div>
+  </div>
+
+  <!-- Monthly detail table: all 4 metrics -->
+  <div class="table-card" style="margin-top:8px">
+    <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:10px">
+      <h3 style="margin:0">QB Free — Monthly Detail (FY27)</h3>
+      <span style="font-size:11px;color:var(--muted)">MAU = month-end stock; Signups / GNS / GNA = monthly adds</span>
+    </div>
+    <div class="table-scroll">
+    <table id="qbfree-monthly-table">
+      <thead>
+        <tr>
+          <th style="text-align:left">Metric</th>
+          <th style="text-align:left;color:var(--muted)">Source</th>
+          <th>Aug</th><th>Sep</th><th>Oct</th><th>Nov</th><th>Dec</th><th>Jan</th>
+          <th>Feb</th><th>Mar</th><th>Apr</th><th>May</th><th>Jun</th><th>Jul</th>
+          <th style="background:#F4F7FF;color:var(--navy);font-weight:700">FY27 Total</th>
+        </tr>
+      </thead>
+      <tbody id="qbfree-monthly-body"></tbody>
+    </table>
+    </div>
+  </div>
+
+  <!-- Channel detail table -->
+  <div class="table-card" style="margin-top:8px">
+    <h3>QB Free — GNS Channel Detail (TP3 vs Jul-15 Revised)</h3>
+    <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          <th style="text-align:left">Channel</th>
+          <th>Signups (5/28)</th>
+          <th>Signups (7/15)</th>
+          <th>GNS (5/28)</th>
+          <th>GNS (7/15)</th>
+          <th>Conv% (5/28)</th>
+          <th>Conv% (7/15)</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="text-align:left;font-weight:500">Digital — Web</td><td>620,000</td><td>250,000</td><td style="color:var(--teal);font-weight:600">44,000</td><td style="color:var(--red);font-weight:600">9,000</td><td>7%</td><td>4%</td><td style="text-align:left;font-size:11px;color:var(--muted)">Traffic to Signup: 175→150 ITC; GNS rate down on web test results</td></tr>
+        <tr><td style="text-align:left;font-weight:500">Digital — Paid Media</td><td>100,000</td><td>133,000</td><td style="color:var(--teal);font-weight:600">6,000</td><td style="color:var(--teal);font-weight:600">9,000</td><td>6%</td><td>7%</td><td style="text-align:left;font-size:11px;color:var(--muted)">$20M→$30M; +$10M at $300 CPA</td></tr>
+        <tr><td style="text-align:left;font-weight:500">Mobile</td><td>125,000</td><td>125,000</td><td style="color:var(--teal);font-weight:600">14,000</td><td style="color:var(--teal);font-weight:600">14,000</td><td>11%</td><td>11%</td><td style="text-align:left;font-size:11px;color:var(--muted)">App Store launch Aug-26; no change</td></tr>
+        <tr><td style="text-align:left;font-weight:500">Internal Partnerships</td><td>30,000</td><td>30,000</td><td style="color:var(--teal);font-weight:600">1,000</td><td style="color:var(--teal);font-weight:600">1,000</td><td>3%</td><td>3%</td><td style="text-align:left;font-size:11px;color:var(--muted)">Mailchimp, TurboTax cross-sell; no change</td></tr>
+        <tr><td style="text-align:left;font-weight:500">External Partnerships</td><td>20,000</td><td>20,000</td><td style="color:var(--teal);font-weight:600">1,000</td><td style="color:var(--teal);font-weight:600">1,000</td><td>5%</td><td>5%</td><td style="text-align:left;font-size:11px;color:var(--muted)">No change</td></tr>
+        <tr><td style="text-align:left;font-weight:500">Retention Saves</td><td>105,000</td><td>105,000</td><td style="color:var(--teal);font-weight:600">9,000</td><td style="color:var(--teal);font-weight:600">9,000</td><td>8.5%</td><td>8.5%</td><td style="text-align:left;font-size:11px;color:var(--muted)">At-risk subs downgraded → re-subscribe; no change</td></tr>
+        <tr><td style="text-align:left;font-weight:500;color:var(--muted);font-style:italic">Low-conf / unop. bets</td><td>—</td><td>334,000</td><td>—</td><td style="color:var(--amber);font-weight:600">15,000</td><td>—</td><td>~4%</td><td style="text-align:left;font-size:11px;color:var(--muted)">Gap-fill; TBD channel/mechanism</td></tr>
+        <tr class="total-row"><td style="text-align:left">TOTAL</td><td>1,000,000</td><td>1,000,000</td><td style="color:var(--teal)">75,000</td><td style="color:var(--red)">57,000</td><td>7.5%</td><td>5.7%</td><td style="text-align:left;font-size:11px;color:var(--red);font-weight:600">−18K GNS gap vs plan</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     TAB 5: RISKS & OPPORTUNITIES
+═══════════════════════════════════════════════ -->
+<div id="tab-ro" class="section">
+<div class="container">
+  <div class="section-header">
+    <h2>Risks &amp; Opportunities — FY26/FY27</h2>
+    <p>Revenue and customer R&amp;O for US QBO SP/Lite. Negative = risk (downside); positive = opportunity (upside). Revenue in $.</p>
+  </div>
+
+  <!-- Toggle -->
+  <div style="display:flex;gap:8px;margin-bottom:20px">
+    <button id="ro-toggle-list" onclick="roSwitch('list')"
+      style="padding:7px 18px;border-radius:20px;border:2px solid var(--blue);background:var(--blue);color:#fff;font-weight:600;cursor:pointer;font-size:13px;font-family:inherit;letter-spacing:0.2px">
+      Risks &amp; Opportunities
+    </button>
+    <button id="ro-toggle-net" onclick="roSwitch('net')"
+      style="padding:7px 18px;border-radius:20px;border:2px solid var(--blue);background:#fff;color:var(--blue);font-weight:600;cursor:pointer;font-size:13px;font-family:inherit;letter-spacing:0.2px">
+      Plan Net of Most Likely R&amp;O
+    </button>
+  </div>
+
+  <!-- ── VIEW 1: R&O List ── -->
+  <div id="ro-view-list">
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">FY27 Rev Risk (Max)</div>
+        <div class="kpi-value" style="color:var(--red)">-$8M</div>
+        <div class="kpi-sub">Full-year max impact</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">FY27 Rev Risk (Most Likely)</div>
+        <div class="kpi-value" style="color:var(--amber)">-$5M</div>
+        <div class="kpi-sub">Confidence-weighted</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">FY27 Customer Risk (Max)</div>
+        <div class="kpi-value" style="color:var(--red)">-83K</div>
+        <div class="kpi-sub">Max subscriber impact FY27</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">FY27 Customer Risk (Most Likely)</div>
+        <div class="kpi-value" style="color:var(--amber)">-59K</div>
+        <div class="kpi-sub">Confidence-weighted</div>
+      </div>
+    </div>
+
+    <div class="chart-row">
+      <div class="chart-card">
+        <h3>FY27 Revenue Risk — Quarterly Impact</h3>
+        <p class="chart-sub">Max vs Most Likely scenario by quarter</p>
+        <div class="chart-wrap"><canvas id="ro-rev-chart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>FY27 Customer Risk — Cumulative Impact</h3>
+        <p class="chart-sub">Cumulative subscriber risk builds through Q3 (E3B Lite dominates)</p>
+        <div class="chart-wrap"><canvas id="ro-cust-chart"></canvas></div>
+      </div>
+    </div>
+
+    <div class="table-card">
+      <h3>Risks &amp; Opportunities — Detail</h3>
+      <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Description</th>
+            <th>Type</th>
+            <th>Product</th>
+            <th>Year</th>
+            <th>Confidence</th>
+            <th>Rev Max Impact</th>
+            <th>Rev Most Likely</th>
+            <th>Cust Max Impact</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody id="ro-table-body"></tbody>
+      </table>
+      </div>
+    </div>
+  </div><!-- end ro-view-list -->
+
+  <!-- ── VIEW 2: Plan Net of Most Likely R&O ── -->
+  <div id="ro-view-net" style="display:none">
+    <p style="font-size:13px;color:var(--muted);margin-bottom:16px">
+      Base plan net of confidence-weighted (most likely) R&amp;O impacts. FY26 revenue is 9-month actuals (Dec/Jan gaps). FY26 customer base is Jul-26 year-end.
+    </p>
+
+    <!-- 4 KPIs: customers and revenue, each year -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px">
+      <div class="kpi-card" style="border-top:3px solid var(--blue)">
+        <div class="kpi-label">FY26 Total Customers</div>
+        <div class="kpi-value" style="color:var(--blue);font-size:24px">311K</div>
+        <div class="kpi-sub">Base plan (Jul-26 year-end)</div>
+        <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
+          <div class="kpi-label">Net of Most Likely R&amp;O</div>
+          <div style="font-size:20px;font-weight:700;color:var(--teal)">307K</div>
+          <div class="kpi-delta neg" style="font-size:11px">-3,773 (Retention, CVR)</div>
+        </div>
+      </div>
+      <div class="kpi-card" style="border-top:3px solid var(--blue)">
+        <div class="kpi-label">FY26 Total Revenue</div>
+        <div class="kpi-value" style="color:var(--navy);font-size:24px">~$83M</div>
+        <div class="kpi-sub">Base plan (full year)</div>
+        <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
+          <div class="kpi-label">Net of Most Likely R&amp;O</div>
+          <div style="font-size:20px;font-weight:700;color:var(--teal)">~$82.7M</div>
+          <div class="kpi-delta neg" style="font-size:11px">-$267K (BDOM, Retention, CVR)</div>
+        </div>
+      </div>
+      <div class="kpi-card" style="border-top:3px solid var(--amber)">
+        <div class="kpi-label">FY27 Total Customers</div>
+        <div class="kpi-value" style="color:var(--blue);font-size:24px">353K</div>
+        <div class="kpi-sub">Base plan (Jul-27 year-end)</div>
+        <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
+          <div class="kpi-label">Net of Most Likely R&amp;O</div>
+          <div style="font-size:20px;font-weight:700;color:var(--amber)">294K</div>
+          <div class="kpi-delta neg" style="font-size:11px">-59K (E3B 40K, Freemium 20K, other)</div>
+        </div>
+      </div>
+      <div class="kpi-card" style="border-top:3px solid var(--amber)">
+        <div class="kpi-label">FY27 Total Revenue</div>
+        <div class="kpi-value" style="color:var(--navy);font-size:24px">~$72M</div>
+        <div class="kpi-sub">Base plan (QBSE + QBSP forecast)</div>
+        <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
+          <div class="kpi-label">Net of Most Likely R&amp;O</div>
+          <div style="font-size:20px;font-weight:700;color:var(--amber)">~$67M</div>
+          <div class="kpi-delta neg" style="font-size:11px">-$5M (BDOM $1.3M, E3B $0.5M, other)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FY27 Quarterly: Base vs Risk-Adjusted Customers -->
+    <div class="chart-card" style="margin-bottom:16px">
+      <h3>FY27 Customers — Base Plan vs Risk-Adjusted (Quarterly)</h3>
+      <p class="chart-sub">Anchored to FY26 exit (311K). Risk gap widens sharply Q2→Q3 as E3B Lite execution and Freemium conversion risks build.</p>
+      <div class="chart-wrap" style="height:280px"><canvas id="ro-qtr-cust-chart"></canvas></div>
+    </div>
+
+    <!-- FY27 Quarterly Revenue: Base vs Risk-Adjusted -->
+    <div class="chart-card" style="margin-bottom:16px">
+      <h3>FY27 Revenue — Base Plan vs Risk-Adjusted (Quarterly)</h3>
+      <p class="chart-sub">Quarterly revenue with and without most likely R&amp;O. Revenue risk is concentrated in Q3-Q4 as BDOM and E3B impacts build.</p>
+      <div class="chart-wrap" style="height:260px"><canvas id="ro-qtr-rev-chart"></canvas></div>
+    </div>
+
+    <!-- R&O waterfall by item -->
+    <div class="table-card">
+      <h3>Most Likely R&amp;O — Revenue &amp; Customer Impact by Item</h3>
+      <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Item</th><th>Product</th><th>Year</th><th>Confidence</th>
+            <th>Rev Impact (ML)</th><th>Cust Impact (ML)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>BDOM Timing Risk</td><td>QBSE/SP</td><td>FY26</td><td>70%</td><td style="color:var(--red)">-$175K (Q4)</td><td>0</td></tr>
+          <tr><td>QBSE Retention Risk</td><td>QBSE/SP</td><td>FY26</td><td>60%</td><td style="color:var(--red)">-$12K (Q4)</td><td style="color:var(--red)">-1,034</td></tr>
+          <tr><td>CVR Softness</td><td>QBO</td><td>FY26</td><td>35%</td><td style="color:var(--red)">-$27K (Q4)</td><td style="color:var(--red)">-799</td></tr>
+          <tr><td>QBO Bulk Promotion</td><td>QBO</td><td>FY26</td><td>30%</td><td style="color:var(--red)">-$53K (Q4)</td><td style="color:var(--red)">-1,940</td></tr>
+          <tr style="font-weight:700;background:var(--bg-card)"><td colspan="4">FY26 Total</td><td style="color:var(--red)">-$267K</td><td style="color:var(--red)">-3,773</td></tr>
+          <tr><td>BDOM Timing Risk</td><td>QBSE/SP</td><td>FY27</td><td>70%</td><td style="color:var(--red)">-$1.26M</td><td>0</td></tr>
+          <tr><td>QBSE Retention (carryover)</td><td>QBSE/SP</td><td>FY27</td><td>60%</td><td style="color:var(--red)">-$130K</td><td style="color:var(--red)">-782</td></tr>
+          <tr><td>Biz Tax E3B Lite</td><td>QBSP</td><td>FY27</td><td>75%</td><td style="color:var(--red)">-$510K</td><td style="color:var(--red)">-40,081</td></tr>
+          <tr><td>Freemium Conversion Risk</td><td>QB Lite</td><td>FY27</td><td>100%</td><td>—</td><td style="color:var(--red)">-19,999</td></tr>
+          <tr><td>QBSP/Lite Baseline Risk</td><td>QB Lite</td><td>FY27</td><td>20%</td><td>—</td><td style="color:var(--muted)">-17,400 (low conf.)</td></tr>
+          <tr><td>Other (Web Growth, Full Funnel, Lite Standalone)</td><td>QBSP/Lite</td><td>FY27</td><td>100%</td><td>—</td><td style="color:var(--red)">-7,371</td></tr>
+          <tr style="font-weight:700;background:var(--bg-card)"><td colspan="4">FY27 Total (excl. low-conf. baseline)</td><td style="color:var(--red)">~-$5M</td><td style="color:var(--red)">-59K</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+  </div><!-- end ro-view-net -->
+
+</div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════
+const months = [
+  'Aug-25','Sep-25','Oct-25','Nov-25','Dec-25','Jan-26',
+  'Feb-26','Mar-26','Apr-26','May-26','Jun-26','Jul-26',
+  'Aug-26','Sep-26','Oct-26','Nov-26','Dec-26','Jan-27',
+  'Feb-27','Mar-27','Apr-27','May-27','Jun-27','Jul-27'
+];
+const fy27Labels = ['Aug-26','Sep-26','Oct-26','Nov-26','Dec-26','Jan-27','Feb-27','Mar-27','Apr-27','May-27','Jun-27','Jul-27'];
+
+// ── Source of truth: second spreadsheet (G00003176 / G00003291)
+// FY26 actuals: Aug-25 through Jun-26 (11 months); Jul-26 = forecast
+// Dec-25 & Jan-26 derived: combined QBSP+Lite minus QBSE (QB Lite not yet live)
+
+// QBSP (G00003176 QBOSolopreneur)
+const qbsp = {
+  // FY26 actuals (Aug-25→Jun-26) + Jul-26 forecast; Dec-25/Jan-26 derived
+  gns_fy26:    [6608,6887,6727,5873,6630,10298,7851,9320,8463,6931,3625,8629],
+  gns_fy27:    [3332,3313,4162,3254,3144,5014,920,1041,979,866,757,767],
+  cancel_fy26: [-5718,-5179,-5241,-4925,-4710,-4395,-6974,-6806,-6686,-7294,-5787,-6716],
+  cancel_fy27: [-7453,-6471,-6452,-6313,-5735,-5594,-8161,-8923,-9448,-10465,-11676,-10764], // combined, not yet split
+  subs_fy26:   [68307,69743,70927,71626,76862,82996,80213,82580,84565,84662,83076,92035],
+  // FY27 monthly: linearly interpolated from quarterly endpoints (Q1-end Oct: 82974, Q2 Jan: 81426, Q3 Apr: 73385, Q4 Jul: 69678)
+  subs_fy27:   [87681,85328,82974, 82458,81942,81426, 78746,76066,73385, 72149,70913,69678],
+  rev_fy26:    [978043,1128228,1117048,1165117,1362544,1274424,1270492,1464022,1338301,1400806,1479337,1494655],
+  rev_fy27:    [1475216,1451387,1515232,1508054,1604934,1667568,1691919,2019795,2094268,2433527,2572081,2776517]
+};
+
+// QB Lite (G00003291 QBO Lite Edition)
+// Actuals: Feb-26 through Jun-26 only (5 months); all other periods = 0 or not yet modeled
+const qbl = {
+  gns_fy26:    [0,0,0,0,0,0,999,1140,1226,1812,1729,0],
+  gns_fy27:    [2822,2719,3046,6223,7072,10688,16058,23640,23813,35958,12036,12426],
+  cancel_fy26: [0,0,0,0,0,0,-235,-317,-353,-342,-483,0],
+  cancel_fy27: [null,null,null,null,null,null,null,null,null,null,null,null], // not yet split in model
+  subs_fy26:   [0,0,0,0,0,0,1852,2524,3267,4574,5625,0],
+  // FY27 interpolated from Q-ends (Q1 Oct: 8073, Q2 Jan: 27374, Q3 Apr: 75334, Q4 Jul: 108947)
+  subs_fy27:   [7076,7574,8073, 14507,20940,27374, 43361,59347,75334, 86538,97742,108947],
+  rev_fy26:    [0,0,0,0,0,0,0,0,0,40489,65786,0],
+  rev_fy27:    [0,0,0,0,0,0,0,0,0,0,0,0]  // not yet modeled separately
+};
+
+// QBSP+Lite combined (original model, used for LEL combined charts)
+// null-safe add: if both null → null; otherwise sum what's available
+function nullAdd(a, b) {
+  return a.map((v, i) => {
+    if (v == null && b[i] == null) return null;
+    return (v || 0) + (b[i] || 0);
+  });
+}
+const qbspLite = {
+  gns_fy26:    qbsp.gns_fy26.map((v,i)=>v+(qbl.gns_fy26[i]||0)),
+  gns_fy27:    qbsp.gns_fy27.map((v,i)=>v+qbl.gns_fy27[i]),
+  cancel_fy26: qbsp.cancel_fy26.map((v,i)=>v+qbl.cancel_fy26[i]),
+  cancel_fy27: qbsp.cancel_fy27,
+  subs_fy26:   qbsp.subs_fy26.map((v,i)=>v+qbl.subs_fy26[i]),
+  subs_fy27:   qbsp.subs_fy27.map((v,i)=>v+qbl.subs_fy27[i]),
+  rev_fy26:    nullAdd(qbsp.rev_fy26, qbl.rev_fy26),
+  rev_fy27:    qbsp.rev_fy27.map((v,i)=>(v||0)+(qbl.rev_fy27[i]||0))
+};
+
+// QBSE
+const qbse = {
+  gns_fy26:    [312,271,292,130,139,231,227,272,218,108,105,0],
+  gns_fy27:    [0,0,0,0,0,0,0,0,0,0,0,0],
+  attrit_fy26: [-5633,-4966,-4677,-4622,-4710,-4395,-4123,-4975,-5136,-7000,-4665,-4377],
+  attrit_fy27: [-3727,-3408,-3014,-3015,-2891,-2974,-2962,-3197,-3627,-4239,-3028,-2827],
+  subs_fy26:   [264875,260156,255760,251260,247140,242912,239025,234300,229367,222455,217882,213386],
+  subs_fy27:   [209659,206251,203237,200223,197331,194357,191395,188198,184571,180332,177304,174477],
+  // Revenue — from second spreadsheet (FY26 actuals Aug-25→Jul-26; FY27 forecast Aug-26→Jul-27)
+  rev_fy26:    [6332923,6012474,6180794,5922093,5740366,5735275,5439624,5534650,4772242,5326536,4850394,5104327],
+  rev_fy27:    [4763601,4390874,4374802,4263000,4251173,4189776,3777277,4061848,3539136,3903723,3775036,3763010],
+  churn_fy26:  [-2.10,-1.90,-1.80,-1.80,-1.70,-1.80,-1.70,-2.10,-2.20,-3.10,-1.90,-1.90],
+  churn_fy27:  [-1.70,-1.50,-1.30,-1.40,-1.40,-1.40,-1.50,-1.50,-1.80,-2.20,-1.60,-1.50]
+};
+
+// QBSP churn % = net cancellations / (prev ending subs + GNS). FY26 opening subs = 67,417
+qbsp.churn_fy26 = [-7.7,-6.9,-6.9,-6.4,-6.0,-5.0,-7.7,-7.6,-7.3,-8.0,-6.6,-7.3];
+qbsp.churn_fy27 = [-7.8,-7.1,-7.2,-7.3,-6.7,-6.4,-9.9,-11.2,-12.3,-14.1,-16.0,-15.0];
+// QBSP+Lite combined churn FY27 (combined cancels / combined prev subs + combined GNS)
+const qbspLiteChurn27 = [-7.2,-6.4,-6.4,-6.3,-5.4,-4.7,-6.5,-6.1,-5.9,-5.6,-6.8,-5.9];
+
+// ── QB Free TP3 monthly data (Aug → Jul, FY27) ──────────────────────────
+// Source: Target Pass 3 model (Yash: Signups + MAU; David: GNA; Ryan: GNS)
+const qbFreeMonths = ['Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun','Jul'];
+const qbFree = {
+  signups: [41470,47281,53092,61395,67906,74416,81429,87739,94048,100417,106727,113037], // monthly adds
+  mau:     [12466,14877,17605,21752,26298,32751,40332,48358,55594,62047,68059,74146],     // month-end stock
+  gna:     [  247, 1469, 1689, 2252, 2518, 2785, 3068, 3332, 3597, 3867, 4131, 4396],    // monthly adds
+  gns:     [  480,  480, 1568, 5512, 6048, 8610, 7547, 8076, 7300, 6408, 5934, 5981]     // monthly adds
+};
+// FY27 totals
+const qbFreeTotals = {
+  signups: qbFree.signups.reduce((a,b)=>a+b,0),  // 928,957
+  mau:     qbFree.mau[11],                         // 74,146 (EoY stock)
+  gna:     qbFree.gna.reduce((a,b)=>a+b,0),        // 33,351
+  gns:     qbFree.gns.reduce((a,b)=>a+b,0)         // 63,944
+};
+
+// GNS by channel (FY26: Direct/Mobile from first sheet; FY27: 4 channels from second sheet split)
+const gnsByChannel = {
+  // QBSP Direct (Web) FY26 actuals + Combined Digital+Partnerships FY27
+  directWeb: {
+    fy26: [2622,3232,3035,2622,2940,4354,2784,3268,2855,4005,2284,2642],
+    fy27: [2517,2404,2553,4800,5496,8063,7110,7944,7448,6741,6124,6768]  // Digital+Partnerships combined
+  },
+  // App Store Mobile FY26 (QBSP) + Combined Mobile FY27
+  mobile: {
+    fy26: [3961,3575,3685,3242,3829,6175,5053,5925,5603,2963,5167,5987],
+    fy27: [3637,3578,4555,4294,4720,7639,7377,8421,7917,6960,6002,5980]
+  },
+  // QB Lite FY26 actuals (channel breakdown not available)
+  qblFY26: {
+    fy26: [0,0,0,0,0,0,999,1140,1226,1812,1729,0],
+    fy27: [0,0,0,0,0,0,0,0,0,0,0,0]
+  },
+  // E3B / Internal Partners — zero FY26, major FY27 driver
+  e3b: {
+    fy26: [0,0,0,0,0,0,0,0,0,0,0,0],
+    fy27: [0,50,100,383,0,0,2491,8316,9427,23123,667,445]
+  },
+  // QBSE Legacy GNS (goes to zero in FY27)
+  qbseLegacy: {
+    fy26: [312,271,292,130,139,231,227,272,218,108,105,0],
+    fy27: [0,0,0,0,0,0,0,0,0,0,0,0]
+  }
+};
+
+// Net Cancellations by channel (QBSP+Lite; FY26 actuals from first sheet)
+const cancelByChannel = {
+  direct: {
+    fy26: [-1546,-1432,-1567,-1620,-1689,-1743,-2066,-2430,-2348,-2210,-2252,-2062],
+    fy27: [-2159,-1880,-2027,-2107,-2061,-2138,-2902,-3652,-4343,-4309,-5714,-4758]
+  },
+  mobile: {
+    fy26: [-4212,-3782,-3712,-3365,-3021,-2652,-4115,-4115,-3755,-4644,-4315,-4653],
+    fy27: [-5294,-4591,-4426,-4206,-3674,-3455,-5259,-5271,-5105,-6156,-5962,-6006]
+  }
+};
+
+// QBSP churn % by channel (from first spreadsheet)
+const qbspChurn = {
+  direct: {
+    fy26: [-4.3,-3.8,-4.0,-4.0,-4.1,-4.0,-4.6,-5.3,-5.0,-4.6,-4.6,-4.2],
+    fy27: [-4.4,-3.8,-4.0,-3.9,-3.6,-3.4,-4.1,-4.4,-4.5,-3.5,-4.6,-3.8]
+  },
+  mobile: {
+    fy26: [-10.3,-9.4,-9.3,-8.5,-7.5,-6.1,-9.0,-8.7,-7.7,-9.7,-8.9,-9.3],
+    fy27: [-10.8,-9.7,-9.4,-8.9,-7.7,-6.7,-9.5,-9.0,-8.3,-9.8,-9.5,-9.5]
+  },
+  total: {
+    fy26: [-7.5,-6.7,-6.7,-6.3,-5.8,-5.0,-6.8,-7.0,-6.4,-7.1,-7.1,-6.8],
+    fy27: [-7.6,-6.7,-6.6,-6.3,-5.5,-4.9,-6.5,-6.3,-6.0,-5.6,-6.2,-5.7]
+  }
+};
+
+// FY27 Transition Plan (% split of GNS between QBSP and QB Lite by channel)
+const transitionPlan = {
+  labels: ['Aug-26','Sep-26','Oct-26','Nov-26','Dec-26','Jan-27','Feb-27','Mar-27','Apr-27','May-27','Jun-27','Jul-27'],
+  digital:    { qbsp:[20,15,10,2,2,2,2,2,2,2,2,2], lite:[80,85,90,98,98,98,98,98,98,98,98,98] },
+  mobile:     { qbsp:[80,80,80,60,60,60,10,10,10,10,10,10], lite:[20,20,20,40,40,40,90,90,90,90,90,90] },
+  extPartner: { qbsp:[75,75,75,50,50,50,10,10,10,10,10,10], lite:[25,25,25,50,50,50,90,90,90,90,90,90] },
+  intPartner: { qbsp:[100,100,100,100,100,100,0,0,0,0,0,0], lite:[0,0,0,0,0,0,100,100,100,100,100,100] },
+  accountant: { qbsp:[100,100,100,0,0,0,0,0,0,0,0,0],       lite:[0,0,0,0,0,0,0,0,0,0,0,0] }
+};
+
+// Combined LEL
+function arrAdd(a, b) { return a.map((v, i) => (v||0) + (b[i]||0)); }
+const lel = {
+  gns_fy26:    arrAdd(qbspLite.gns_fy26, qbse.gns_fy26),
+  gns_fy27:    arrAdd(qbspLite.gns_fy27, qbse.gns_fy27),
+  cancel_fy26: arrAdd(qbspLite.cancel_fy26, qbse.attrit_fy26),
+  cancel_fy27: arrAdd(qbspLite.cancel_fy27, qbse.attrit_fy27),
+  subs_fy26:   arrAdd(qbspLite.subs_fy26, qbse.subs_fy26),
+  subs_fy27:   arrAdd(qbspLite.subs_fy27, qbse.subs_fy27),
+  // Revenue: QBSE + QBSP + QB Lite. Dec-25/Jan-26/Jul-26 are data gaps.
+  rev_fy26:    nullAdd(qbspLite.rev_fy26, qbse.rev_fy26),
+  rev_fy27:    qbspLite.rev_fy27.map((v,i)=>(v||0)+(qbse.rev_fy27[i]||0))
+};
+// Pre-compute totals for KPI display
+const lelRevFY26Total = lel.rev_fy26.reduce((s,v)=>s+(v||0),0); // $61.8M (excl data gaps)
+const lelRevFY27Total = lel.rev_fy27.reduce((s,v)=>s+(v||0),0); // ~$71.9M
+const lelGnsFY26Total = lel.gns_fy26.reduce((s,v)=>s+v,0);
+const lelGnsFY27Total = lel.gns_fy27.reduce((s,v)=>s+v,0);
+
+// FY27 GNS Build
+const gnsBuild = {
+  web: {
+    baseline:  {q:[5240,6168,9256,7012], fy:27676},
+    webgrowth: {q:[94,568,908,991],      fy:2561},
+    fullfunnel:{q:[168,632,558,502],     fy:1860},
+    freemium:  {q:[720,8299,8870,7111],  fy:25000},
+    liteStand: {q:[0,1279,1417,2704],    fy:5400}
+  },
+  mobile: {
+    baseline:  {q:[10845,12616,18116,14432], fy:56009},
+    reimagine: {q:[0,937,1373,1094],         fy:3404},
+    fullfunnel:{q:[132,497,438,395],          fy:1462},
+    freemium:  {q:[544,1786,2599,2072],       fy:7001},
+    liteStand: {q:[249,817,1189,949],         fy:3204}
+  },
+  partnerships: {
+    baseline:  {q:[1238,1394,1469,1294], fy:5395},
+    e3bLite:   {q:[150,383,20232,24235], fy:45000}
+  },
+  retention: {
+    freemiumSaves: {q:[100,1000,2300,4100], fy:7500}
+  }
+};
+
+// R&O data
+const roItems = [
+  {desc:'BDOM Risk - QBSE/SP rev rec on BDOM dates', type:'Risk', product:'QBSE/SP', year:'FY26', conf:'70%', confLabel:'Medium', revMax:'-$250K (Q4)', revML:'-$175K (Q4)', custMax:'n/a', notes:'Revenue recognition timing risk'},
+  {desc:'BDOM Risk - QBSE/SP rev rec on BDOM dates', type:'Risk', product:'QBSE/SP', year:'FY27', conf:'70%', confLabel:'Medium', revMax:'-$1.80M', revML:'-$1.26M', custMax:'0', notes:'Ongoing BDOM timing risk all FY27'},
+  {desc:'QBSE Retention Risk', type:'Risk', product:'QBSE/SP', year:'FY26', conf:'60%', confLabel:'Medium', revMax:'-$19.8K (Q4)', revML:'-$11.9K (Q4)', custMax:'-1,034 (Q4)', notes:'Retention softness in legacy base'},
+  {desc:'QBSE Retention Risk (carryover from FY26)', type:'Risk', product:'QBSE/SP', year:'FY27', conf:'60%', confLabel:'Medium', revMax:'-$216.6K', revML:'-$129.9K', custMax:'-782 (Q4)', notes:'Impact from FY26 items persists'},
+  {desc:'Biz Tax E3B Lite Risk', type:'Risk', product:'QBSP', year:'FY27', conf:'75%', confLabel:'High', revMax:'-$680.4K', revML:'-$510.3K', custMax:'-40,081 (Q4 cum.)', notes:'Partnership execution risk; very large customer impact in H2'},
+  {desc:'E3B Lite Price Risk', type:'Risk', product:'QBSP', year:'FY27', conf:'75%', confLabel:'High', revMax:'-$612.3K', revML:'-$459.2K', custMax:'n/a', notes:'E3B at $60 annual vs $240 SP list price'},
+  {desc:'QBSP/Lite Baseline Risk', type:'Risk', product:'QB Lite', year:'FY27', conf:'20%', confLabel:'Low', revMax:'-$1.83M', revML:'-$366.4K', custMax:'-17,400 (FY27)', notes:'Low confidence; baseline softer than forecast'},
+  {desc:'Web Growth Optimization Risk', type:'Risk', product:'QBSP', year:'FY27', conf:'100%', confLabel:'High', revMax:'-$142.3K', revML:'-$142.3K', custMax:'-1,923 (FY27)', notes:'Baked into forecast'},
+  {desc:'Full Funnel Marketing Risk', type:'Risk', product:'QBSP', year:'FY27', conf:'100%', confLabel:'High', revMax:'-$128.8K', revML:'-$128.8K', custMax:'-1,397 (FY27)', notes:'Baked into forecast'},
+  {desc:'Freemium Conversion Risk', type:'Risk', product:'QB Lite', year:'FY27', conf:'100%', confLabel:'High', revMax:'-$1.71M', revML:'-$1.71M', custMax:'-19,999 (FY27)', notes:'Largest customer risk outside E3B'},
+  {desc:'Lite Standalone Risk', type:'Risk', product:'QB Lite', year:'FY27', conf:'100%', confLabel:'High', revMax:'-$265.9K', revML:'-$265.9K', custMax:'-4,051 (FY27)', notes:''},
+  {desc:'CVR Softness (Sales channel)', type:'Risk', product:'QBO', year:'FY26', conf:'35%', confLabel:'Low', revMax:'-$77K (Q4)', revML:'-$27K (Q4)', custMax:'-799 (Q4 cum.)', notes:'Conversion rate softness in sales-led motion'},
+  {desc:'QBO Bulk Promotion Forecast Risk', type:'Risk', product:'QBO', year:'FY26', conf:'30%', confLabel:'Low', revMax:'-$176.7K (Q4)', revML:'-$53K (Q4)', custMax:'-1,940 (Q4 cum.)', notes:'6K subs baked into forecast for Q4'}
+];
+
+// R&O Quarterly Summaries (FY27 only)
+const roRevMax =  [-653124, -1127564, -2043615, -3985381];
+const roRevML =   [-396041, -682941,  -1389937, -2770949];
+const roCustMax = [-5863,   -17777,   -48139,   -82917];
+const roCustML =  [-2212,   -11054,   -33906,   -58620];
+
+// ══════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════
+function fmt(n, dec=0) {
+  if (n === null || n === undefined) return '—';
+  return n.toLocaleString('en-US', {minimumFractionDigits:dec, maximumFractionDigits:dec});
+}
+function fmtK(n) {
+  if (Math.abs(n) >= 1000) return (n/1000).toFixed(1) + 'K';
+  return n.toString();
+}
+
+// ══════════════════════════════════════════
+// CHARTS
+// ══════════════════════════════════════════
+const COLORS = {
+  blue:   '#236CFF',   // Super Blue (primary)
+  blueFc: '#6699FF',   // Super Blue light (forecast)
+  teal:   '#00A650',   // Digital Green (positive/growth)
+  tealFc: '#4DBF84',   // Green light
+  red:    '#D52B1E',   // Tomato (risk/negative)
+  redFc:  '#F08080',   // Tomato light
+  purple: '#3B30C4',   // Blueberry (accent)
+  amber:  '#E57A00',   // Butterscotch (caution)
+  green:  '#00A650',
+  gray:   '#6D7175',   // Intuit mid-gray
+  lel:    '#236CFF',
+  lelFc:  '#6699FF',
+  navy:   '#0B2B4E'
+};
+
+function makeChart(id, config) {
+  const ctx = document.getElementById(id);
+  if (!ctx) return;
+  // Support inline plugin registration via config.extraPlugins (top-level Chart.js plugins array)
+  const inlinePlugins = config.extraPlugins || [];
+  const cfg = Object.assign({}, config);
+  delete cfg.extraPlugins;
+  if (cfg.options) delete cfg.options.plugins2;
+  // Chart.js: top-level `plugins` array registers inline plugins (separate from options.plugins)
+  cfg.plugins = inlinePlugins;
+  return new Chart(ctx, cfg);
+}
+
+// Single continuous line dataset — solid for FY26 (indices 0-11), dashed/lighter for FY27 (indices 12-23)
+function segLine(label, fy26data, fy27data, solidColor, fcColor) {
+  fcColor = fcColor || solidColor + '80';
+  return {
+    label,
+    data: [...fy26data, ...fy27data],
+    borderColor: solidColor,
+    backgroundColor: 'transparent',
+    borderWidth: 2,
+    pointRadius: 2,
+    pointHoverRadius: 5,
+    tension: 0.3,
+    fill: false,
+    segment: {
+      borderColor: ctx => ctx.p0DataIndex >= 11 ? fcColor : solidColor,
+      borderDash: ctx => ctx.p0DataIndex >= 11 ? [5,4] : []
+    }
+  };
+}
+
+function lineDataset(label, data, color, dashed=false, fill=false) {
+  return {
+    label, data,
+    borderColor: color,
+    backgroundColor: fill ? color + '20' : 'transparent',
+    borderWidth: 2,
+    borderDash: dashed ? [5,4] : [],
+    pointRadius: 2,
+    pointHoverRadius: 5,
+    tension: 0.3,
+    fill
+  };
+}
+
+function barDataset(label, data, color, alpha=0.85) {
+  return {
+    label, data,
+    backgroundColor: color + Math.round(alpha*255).toString(16).padStart(2,'0'),
+    borderColor: color,
+    borderWidth: 1,
+    borderRadius: 3
+  };
+}
+
+const defaultOpts = {
+  responsive: true, maintainAspectRatio: false,
+  interaction: { mode: 'index', intersect: false },
+  plugins: {
+    legend: { position: 'bottom', labels: { boxWidth: 12, padding: 10, font: {size:11} } },
+    tooltip: { callbacks: { label: ctx => ` ${ctx.dataset.label}: ${fmt(ctx.raw)}` } }
+  },
+  scales: {
+    x: { grid: { display: false }, ticks: { font:{size:10}, maxRotation:45 } },
+    y: { grid: { color: '#f0f4f8' }, ticks: { font:{size:11} } }
+  }
+};
+
+// Annotation helper: vertical line at the FY26/FY27 boundary (between index 11 and 12)
+// Add this to any chart's plugins.annotation if needed
+const fyBoundaryAnnotation = {
+  type: 'line',
+  xMin: 11.5, xMax: 11.5,
+  borderColor: '#6D7175',
+  borderWidth: 1,
+  borderDash: [4,4],
+  label: { display: true, content: 'FY27 →', position: 'start', font:{size:10}, color:'#64748b', backgroundColor:'transparent' }
+};
+
+function initCharts() {
+  // ── LEL Combined Subs
+  makeChart('lel-subs-chart', {
+    type: 'line',
+    data: {
+      labels: months,
+      datasets: [
+        segLine('Combined LEL', lel.subs_fy26, lel.subs_fy27, COLORS.lel),
+        segLine('QBSP+Lite', qbspLite.subs_fy26, qbspLite.subs_fy27, COLORS.teal),
+        segLine('QBSE', qbse.subs_fy26, qbse.subs_fy27, COLORS.gray)
+      ]
+    },
+    options: { ...defaultOpts,
+      plugins: { ...defaultOpts.plugins,
+        tooltip: { callbacks: { label: ctx => ` ${ctx.dataset.label}: ${fmt(ctx.raw)}` } }
+      },
+      scales: { ...defaultOpts.scales,
+        y: { ...defaultOpts.scales.y,
+          ticks: { font:{size:11}, callback: v => (v/1000).toFixed(0)+'K' }
+        }
+      }
+    }
+  });
+
+  // ── LEL GNS by Channel (stacked)
+  makeChart('lel-gns-chart', {
+    type: 'bar',
+    data: {
+      labels: months,
+      datasets: [
+        barDataset('Web/Direct (QBSP)', [...gnsByChannel.directWeb.fy26, ...gnsByChannel.directWeb.fy27], COLORS.blue),
+        barDataset('Mobile (QBSP)', [...gnsByChannel.mobile.fy26, ...gnsByChannel.mobile.fy27], COLORS.purple),
+        barDataset('QB Lite FY26 (undiff.)', [...gnsByChannel.qblFY26.fy26, ...gnsByChannel.qblFY26.fy27], COLORS.teal),
+        barDataset('E3B / Internal Partners', [...gnsByChannel.e3b.fy26, ...gnsByChannel.e3b.fy27], COLORS.amber),
+        barDataset('QBSE Legacy', [...gnsByChannel.qbseLegacy.fy26, ...gnsByChannel.qbseLegacy.fy27], COLORS.gray)
+      ]
+    },
+    options: { ...defaultOpts,
+      scales: { x: { stacked: true, ...defaultOpts.scales.x }, y: { stacked: true, ...defaultOpts.scales.y } }
+    }
+  });
+
+  // ── LEL Cancellations by channel (Mobile vs Direct)
+  makeChart('lel-cancel-chart', {
+    type: 'bar',
+    data: {
+      labels: months,
+      datasets: [
+        barDataset('QBSP Direct Cancel', [...cancelByChannel.direct.fy26, ...cancelByChannel.direct.fy27], COLORS.blue),
+        barDataset('QBSP Mobile Cancel', [...cancelByChannel.mobile.fy26, ...cancelByChannel.mobile.fy27], COLORS.purple),
+        barDataset('QBSE Attrition', [...qbse.attrit_fy26, ...qbse.attrit_fy27], COLORS.red)
+      ]
+    },
+    options: { ...defaultOpts,
+      scales: { x: { stacked: true, ...defaultOpts.scales.x }, y: { stacked: true, ...defaultOpts.scales.y } }
+    }
+  });
+
+  // ── LEL Revenue (source of truth: second spreadsheet)
+  makeChart('lel-rev-chart', {
+    type: 'line',
+    data: {
+      labels: months,
+      datasets: [
+        segLine('QBSE Revenue', qbse.rev_fy26, qbse.rev_fy27, COLORS.gray),
+        segLine('QBSP Revenue', qbsp.rev_fy26, qbsp.rev_fy27, COLORS.blue),
+        segLine('QB Lite Revenue', qbl.rev_fy26, qbl.rev_fy27, COLORS.teal)
+      ]
+    },
+    options: { ...defaultOpts,
+      plugins: { ...defaultOpts.plugins,
+        tooltip: { callbacks: { label: ctx => ctx.raw != null ? ` ${ctx.dataset.label}: $${fmt(ctx.raw)}` : ' —' } }
+      },
+      scales: { ...defaultOpts.scales,
+        y: { ...defaultOpts.scales.y,
+          ticks: { callback: v => '$'+(v/1000000).toFixed(1)+'M' }
+        }
+      }
+    }
+  });
+
+  // ── LEL Revenue Mix (stacked bar FY27 only)
+  makeChart('lel-rev-mix-chart', {
+    type: 'bar',
+    data: {
+      labels: fy27Labels,
+      datasets: [
+        barDataset('QBSE Revenue', qbse.rev_fy27, COLORS.gray),
+        barDataset('QBSP Revenue', qbsp.rev_fy27, COLORS.blue)
+      ]
+    },
+    options: { ...defaultOpts,
+      plugins: { ...defaultOpts.plugins,
+        tooltip: { callbacks: { label: ctx => ` ${ctx.dataset.label}: $${fmt(ctx.raw)}` } }
+      },
+      scales: {
+        x: { stacked: true, ...defaultOpts.scales.x },
+        y: { stacked: true, ...defaultOpts.scales.y, ticks: { callback: v => '$'+(v/1000000).toFixed(1)+'M' } }
+      }
+    }
+  });
+
+  // ── QBSE Subs
+  makeChart('qbse-subs-chart', {
+    type: 'line',
+    data: {
+      labels: months,
+      datasets: [ segLine('QBSE Subscribers', qbse.subs_fy26, qbse.subs_fy27, COLORS.gray) ]
+    },
+    options: { ...defaultOpts,
+      scales: { ...defaultOpts.scales,
+        y: { ...defaultOpts.scales.y, ticks: { callback: v => Math.round(v/1000)+'K' } }
+      }
+    }
+  });
+
+  // ── QBSE Attrition
+  makeChart('qbse-attrit-chart', {
+    type: 'line',
+    data: {
+      labels: months,
+      datasets: [ segLine('QBSE Net Attrition', qbse.attrit_fy26, qbse.attrit_fy27, COLORS.red) ]
+    },
+    options: { ...defaultOpts,
+      scales: { ...defaultOpts.scales,
+        y: { ...defaultOpts.scales.y, ticks: { callback: v => fmt(v) } }
+      }
+    }
+  });
+
+  // ── QBSE Revenue
+  makeChart('qbse-rev-chart', {
+    type: 'line',
+    data: {
+      labels: months,
+      datasets: [ segLine('QBSE Revenue', qbse.rev_fy26, qbse.rev_fy27, COLORS.gray) ]
+    },
+    options: { ...defaultOpts,
+      plugins: { ...defaultOpts.plugins,
+        tooltip: { callbacks: { label: ctx => ctx.raw != null ? ` QBSE Revenue: $${fmt(ctx.raw)}` : ' —' } }
+      },
+      scales: { ...defaultOpts.scales,
+        y: { ...defaultOpts.scales.y, ticks: { callback: v => '$'+(v/1000000).toFixed(1)+'M' } }
+      }
+    }
+  });
+
+  // ── QBSE Churn %
+  makeChart('qbse-churn-chart', {
+    type: 'line',
+    data: {
+      labels: months,
+      datasets: [ segLine('QBSE Monthly Churn %', qbse.churn_fy26, qbse.churn_fy27, COLORS.red) ]
+    },
+    options: { ...defaultOpts,
+      scales: { ...defaultOpts.scales,
+        y: { ...defaultOpts.scales.y, ticks: { callback: v => v+'%' } }
+      },
+      plugins: { ...defaultOpts.plugins,
+        tooltip: { callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.raw}%` } }
+      }
+    }
+  });
+
+  // ── QBSP vs QB Lite Subs
+  makeChart('qbsp-subs-chart', {
+    type: 'line',
+    data: {
+      labels: months,
+      datasets: [
+        segLine('QBSP Subscribers', qbsp.subs_fy26, qbsp.subs_fy27, COLORS.blue),
+        segLine('QB Lite Subscribers', qbl.subs_fy26, qbl.subs_fy27, COLORS.teal)
+      ]
+    },
+    options: { ...defaultOpts,
+      plugins: { ...defaultOpts.plugins,
+        legend: { ...defaultOpts.plugins.legend },
+        tooltip: { callbacks: { label: ctx => ` ${ctx.dataset.label}: ${fmt(ctx.raw||0)}` } }
+      },
+      scales: { ...defaultOpts.scales,
+        y: { ...defaultOpts.scales.y, ticks: { callback: v => Math.round(v/1000)+'K' } }
+      }
+    }
+  });
+
+  // ── QBSP vs QB Lite GNS (stacked bar)
+  makeChart('qbsp-gns-chart', {
+    type: 'bar',
+    data: {
+      labels: months,
+      datasets: [
+        barDataset('QBSP GNS', [...qbsp.gns_fy26, ...Array(12).fill(0)], COLORS.blue),
+        barDataset('QB Lite GNS', [...qbl.gns_fy26, ...Array(12).fill(0)], COLORS.teal),
+        {...barDataset('QBSP GNS', [...Array(12).fill(0), ...qbsp.gns_fy27], COLORS.blue, 0.4), legendDisplay: false},
+        {...barDataset('QB Lite GNS', [...Array(12).fill(0), ...qbl.gns_fy27], COLORS.teal, 0.4), legendDisplay: false}
+      ]
+    },
+    options: { ...defaultOpts,
+      plugins: { ...defaultOpts.plugins,
+        legend: { ...defaultOpts.plugins.legend, labels: { ...defaultOpts.plugins.legend.labels,
+          filter: (item, data) => data.datasets[item.datasetIndex].legendDisplay !== false
+        }}
+      },
+      scales: { x: { stacked: true, ...defaultOpts.scales.x }, y: { stacked: true, ...defaultOpts.scales.y } }
+    }
+  });
+
+  // ── FY27 GNS Share chart (QBSP% vs Lite%)
+  const qbspTotals = qbsp.gns_fy27;
+  const qblTotals  = qbl.gns_fy27;
+  const combined27 = qbspTotals.map((v,i) => v + qblTotals[i]);
+  const qbspPct    = qbspTotals.map((v,i) => combined27[i] ? Math.round(v/combined27[i]*100) : 0);
+  const qblPct     = qblTotals.map((v,i)  => combined27[i] ? Math.round(v/combined27[i]*100) : 0);
+  // ── QBSP Churn %
+  makeChart('qbsp-churn-chart', {
+    type: 'line',
+    data: {
+      labels: months,
+      datasets: [
+        segLine('Direct Churn %', qbspChurn.direct.fy26, qbspChurn.direct.fy27, COLORS.blue),
+        segLine('Mobile Churn %', qbspChurn.mobile.fy26, qbspChurn.mobile.fy27, COLORS.purple),
+        segLine('Total Churn %', qbspChurn.total.fy26, qbspChurn.total.fy27, COLORS.gray)
+      ]
+    },
+    options: { ...defaultOpts,
+      scales: { ...defaultOpts.scales,
+        y: { ...defaultOpts.scales.y, ticks: { callback: v => v + '%' } }
+      },
+      plugins: { ...defaultOpts.plugins,
+        tooltip: { callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.raw}%` } }
+      }
+    }
+  });
+
+  // ── QBSP Net Cancellations by Channel
+  makeChart('qbsp-cancel-chart', {
+    type: 'bar',
+    data: {
+      labels: months,
+      datasets: [
+        barDataset('Direct', [...cancelByChannel.direct.fy26, ...Array(12).fill(0)], COLORS.blue),
+        barDataset('Mobile', [...cancelByChannel.mobile.fy26, ...Array(12).fill(0)], COLORS.purple),
+        {...barDataset('Direct', [...Array(12).fill(0), ...cancelByChannel.direct.fy27], '#6699FF'), legendDisplay: false},
+        {...barDataset('Mobile', [...Array(12).fill(0), ...cancelByChannel.mobile.fy27], '#c4b5fd'), legendDisplay: false}
+      ]
+    },
+    options: { ...defaultOpts,
+      plugins: { ...defaultOpts.plugins,
+        legend: { ...defaultOpts.plugins.legend, labels: { ...defaultOpts.plugins.legend.labels,
+          filter: (item, data) => data.datasets[item.datasetIndex].legendDisplay !== false
+        }}
+      },
+      scales: { x: { stacked: true, ...defaultOpts.scales.x }, y: { stacked: true, ...defaultOpts.scales.y } }
+    }
+  });
+
+  // ── GNS Build — Waterfall Chart (proper stacked spacer+delta pattern)
+  (function() {
+    // Colors per bar
+    const C_BASE = '#236CFF'; // baseline - blue
+    const C_E3B  = '#E57A00'; // E3B Lite - amber (Partnerships)
+    const C_FR   = '#236CFF'; // Freemium - blue (Web dominant)
+    const C_LS   = '#3B30C4'; // Lite Standalone - purple (Mobile+Web)
+    const C_WG   = '#236CFF'; // Web Growth + FF - blue
+    const C_REM  = '#3B30C4'; // Reimagine Mobile - purple
+    const C_TOT  = '#0B2B4E'; // FY27 Total - navy
+
+    // Increments
+    const bTot   = gnsBuild.web.baseline.fy + gnsBuild.mobile.baseline.fy + gnsBuild.partnerships.baseline.fy; // 89,080
+    const iE3b   = gnsBuild.partnerships.e3bLite.fy;
+    const iFr    = gnsBuild.web.freemium.fy + gnsBuild.mobile.freemium.fy;
+    const iLs    = gnsBuild.web.liteStand.fy + gnsBuild.mobile.liteStand.fy;
+    const iWg    = gnsBuild.web.webgrowth.fy + gnsBuild.web.fullfunnel.fy + gnsBuild.mobile.fullfunnel.fy;
+    const iRem   = gnsBuild.mobile.reimagine.fy;
+    const fy27T  = qbspLite.gns_fy27.reduce((s,v) => s + (v||0), 0);
+
+    const sizes    = [bTot, iE3b, iFr, iLs, iWg, iRem, fy27T];
+    const isTotal  = [false,false,false,false,false,false,true];
+    const barColors= [C_BASE,C_E3B,C_FR,C_LS,C_WG,C_REM,C_TOT];
+
+    // Cumulative spacer positions
+    let cum = 0;
+    const spacers = sizes.map((s, i) => {
+      const sp = isTotal[i] ? 0 : cum;
+      if (!isTotal[i]) cum += s;
+      return sp;
+    });
+
+    const labels = [
+      'FY27 Baseline', 'E3B Lite', 'Freemium',
+      'Lite Standalone', ['Web Growth', '+ Full Funnel'],
+      ['Reimagine', 'Mobile'], 'FY27 Total'
+    ];
+
+    // Click breakdown data
+    const breakdowns = [
+      { title: 'FY27 Baseline by Channel',
+        rows: [
+          { label:'Web / Digital', value: gnsBuild.web.baseline.fy.toLocaleString(), color: C_BASE },
+          { label:'Mobile',        value: gnsBuild.mobile.baseline.fy.toLocaleString(), color: C_REM },
+          { label:'Partnerships',  value: gnsBuild.partnerships.baseline.fy.toLocaleString(), color: C_E3B },
+          { label:'Total', value: bTot.toLocaleString(), color: C_TOT }
+        ]},
+      { title: 'E3B Lite — Business Tax Partnerships',
+        rows: [{ label:'Partnerships GNS', value: iE3b.toLocaleString(), color: C_E3B }] },
+      { title: 'Freemium Conversion',
+        rows: [
+          { label:'Web / Digital', value: gnsBuild.web.freemium.fy.toLocaleString(), color: C_BASE },
+          { label:'Mobile',        value: gnsBuild.mobile.freemium.fy.toLocaleString(), color: C_REM },
+          { label:'Total', value: iFr.toLocaleString(), color: C_TOT }
+        ]},
+      { title: 'Lite Standalone',
+        rows: [
+          { label:'Web / Digital', value: gnsBuild.web.liteStand.fy.toLocaleString(), color: C_BASE },
+          { label:'Mobile',        value: gnsBuild.mobile.liteStand.fy.toLocaleString(), color: C_REM },
+          { label:'Total', value: iLs.toLocaleString(), color: C_TOT }
+        ]},
+      { title: 'Web Growth + Full Funnel Marketing',
+        rows: [
+          { label:'Web Growth Opt', value: gnsBuild.web.webgrowth.fy.toLocaleString(), color: C_BASE },
+          { label:'Full Funnel Web', value: gnsBuild.web.fullfunnel.fy.toLocaleString(), color: C_BASE },
+          { label:'Full Funnel Mobile', value: gnsBuild.mobile.fullfunnel.fy.toLocaleString(), color: C_REM },
+          { label:'Total', value: iWg.toLocaleString(), color: C_TOT }
+        ]},
+      { title: 'Reimagine Mobile',
+        rows: [{ label:'Mobile GNS', value: iRem.toLocaleString(), color: C_REM }] },
+      { title: 'FY27 Total GNS (Model)',
+        rows: [
+          { label:'FY27 Total', value: fy27T.toLocaleString(), color: C_TOT },
+          { label:'vs Baseline', value: '+' + (fy27T - bTot).toLocaleString(), color: C_BASE }
+        ]}
+    ];
+
+    // Custom plugin: draw +XK labels above each delta bar
+    const labelPlugin = {
+      id: 'wfDeltaLabels',
+      afterDraw(chart) {
+        const ctx2 = chart.ctx;
+        const meta = chart.getDatasetMeta(1); // delta dataset
+        meta.data.forEach((bar, i) => {
+          const val = sizes[i];
+          const isT = isTotal[i];
+          const text = isT ? Math.round(val/1000)+'K' : '+'+Math.round(val/1000)+'K';
+          ctx2.save();
+          ctx2.fillStyle = '#0B2B4E';
+          ctx2.font = 'bold 11px Inter, system-ui, sans-serif';
+          ctx2.textAlign = 'center';
+          ctx2.fillText(text, bar.x, bar.y - 7);
+          ctx2.restore();
+        });
+      }
+    };
+
+    makeChart('gns-waterfall-chart', {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: '__spacer__',
+            data: spacers,
+            backgroundColor: 'rgba(0,0,0,0)',
+            stack: 'wf',
+            barPercentage: 0.55,
+            categoryPercentage: 0.7,
+            borderWidth: 0
+          },
+          {
+            label: 'GNS',
+            data: sizes,
+            backgroundColor: barColors,
+            stack: 'wf',
+            barPercentage: 0.55,
+            categoryPercentage: 0.7,
+            borderWidth: 0,
+            borderRadius: 3,
+            borderSkipped: false
+          }
+        ]
+      },
+      options: { ...defaultOpts,
+        plugins: { ...defaultOpts.plugins,
+          legend: { display: false },
+          tooltip: {
+            filter: ctx => ctx.dataset.label !== '__spacer__',
+            callbacks: {
+              title: ctxArr => {
+                const l = labels[ctxArr[0].dataIndex];
+                return Array.isArray(l) ? l.join(' ') : l;
+              },
+              label: ctx => {
+                const i = ctx.dataIndex;
+                const v = Math.round(sizes[i]).toLocaleString();
+                return isTotal[i] ? ' FY27 Total: ' + v : ' +' + v + ' GNS';
+              }
+            }
+          }
+        },
+        scales: {
+          x: { ...defaultOpts.scales.x, stacked: true },
+          y: { ...defaultOpts.scales.y, stacked: true,
+            ticks: { callback: v => (v/1000).toFixed(0)+'K' }
+          }
+        },
+        plugins2: undefined,  // suppress the outer plugins
+        onClick: (evt, elements) => {
+          if (!elements.length) return;
+          // only handle clicks on the delta (dataset index 1)
+          const el = elements.find(e => e.datasetIndex === 1);
+          if (!el) return;
+          const idx = el.index;
+          const detail = document.getElementById('gns-waterfall-detail');
+          const titleEl = document.getElementById('gns-detail-title');
+          const bodyEl = document.getElementById('gns-detail-body');
+          const bd = breakdowns[idx];
+          if (!bd) return;
+          titleEl.textContent = bd.title;
+          bodyEl.innerHTML = bd.rows.map(r =>
+            '<div style="padding:8px 12px;background:#fff;border-radius:4px;border:1px solid var(--border)">' +
+            '<div style="display:flex;align-items:center;gap:6px;margin-bottom:2px">' +
+            '<span style="width:10px;height:10px;border-radius:2px;background:' + r.color + ';display:inline-block;flex-shrink:0"></span>' +
+            '<span style="font-weight:600;color:var(--navy)">' + r.label + '</span></div>' +
+            '<div style="font-size:16px;font-weight:700;color:var(--navy)">' + r.value + '</div></div>'
+          ).join('');
+          detail.style.display = 'block';
+        }
+      },
+      extraPlugins: [labelPlugin]
+    });
+  })();
+
+  // ── QB Free Chart: Monthly Signups (bars, left) vs GNS + GNA (lines, right) ──
+  // MAU is a month-end stock, not a monthly flow — excluded from this chart to avoid
+  // apples-to-oranges comparison with signup/GNS monthly adds. See table for MAU detail.
+  makeChart('qbfree-combined-chart', {
+    type: 'bar',
+    data: {
+      labels: qbFreeMonths,
+      datasets: [
+        {
+          type: 'bar',
+          label: 'Monthly Signups',
+          data: qbFree.signups,
+          backgroundColor: 'rgba(35,108,255,0.18)',
+          borderColor: '#236CFF',
+          borderWidth: 1.5,
+          borderRadius: 3,
+          yAxisID: 'yLeft',
+          order: 3
+        },
+        {
+          type: 'line',
+          label: 'GNS',
+          data: qbFree.gns,
+          borderColor: '#00A650',
+          backgroundColor: 'rgba(0,166,80,0.08)',
+          borderWidth: 2.5,
+          pointRadius: 3.5,
+          tension: 0.3,
+          fill: true,
+          yAxisID: 'yRight',
+          order: 1
+        },
+        {
+          type: 'line',
+          label: 'GNA',
+          data: qbFree.gna,
+          borderColor: '#3B30C4',
+          backgroundColor: 'transparent',
+          borderWidth: 2,
+          pointRadius: 3,
+          borderDash: [5,3],
+          tension: 0.3,
+          yAxisID: 'yRight',
+          order: 2
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { position: 'top', labels: { boxWidth: 14, font: { size: 11 }, usePointStyle: true } },
+        tooltip: {
+          callbacks: {
+            label: ctx => {
+              const v = ctx.parsed.y;
+              const k = v >= 1000 ? Math.round(v/1000)+'K' : v.toLocaleString();
+              return ` ${ctx.dataset.label}: ${k}`;
+            },
+            afterBody: items => {
+              const signup = items.find(i => i.datasetIndex === 0);
+              const gns    = items.find(i => i.datasetIndex === 1);
+              if (signup && gns && signup.raw > 0) {
+                return [` GNS/Signup rate: ${(gns.raw/signup.raw*100).toFixed(1)}%`];
+              }
+              return [];
+            }
+          }
+        }
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { size: 11 } } },
+        yLeft: {
+          position: 'left',
+          beginAtZero: true,
+          title: { display: true, text: 'Monthly Signups', font: { size: 10 }, color: '#236CFF' },
+          ticks: { font: { size: 10 }, color: '#236CFF', callback: v => v >= 1000 ? Math.round(v/1000)+'K' : v },
+          grid: { color: 'rgba(0,0,0,0.05)' }
+        },
+        yRight: {
+          position: 'right',
+          beginAtZero: true,
+          title: { display: true, text: 'GNS / GNA', font: { size: 10 }, color: '#00A650' },
+          ticks: { font: { size: 10 }, color: '#00A650', callback: v => v >= 1000 ? (v/1000).toFixed(1)+'K' : v },
+          grid: { display: false }
+        }
+      }
+    }
+  });
+
+  // ── R&O Revenue Chart
+  // ── R&O Revenue Chart
+  makeChart('ro-rev-chart', {
+    type: 'bar',
+    data: {
+      labels: ['Q1 FY27', 'Q2 FY27', 'Q3 FY27', 'Q4 FY27'],
+      datasets: [
+        barDataset('Max Risk', roRevMax, COLORS.red),
+        barDataset('Most Likely', roRevML, COLORS.amber)
+      ]
+    },
+    options: { ...defaultOpts,
+      plugins: { ...defaultOpts.plugins,
+        tooltip: { callbacks: { label: ctx => ` ${ctx.dataset.label}: $${fmt(ctx.raw)}` } }
+      },
+      scales: { ...defaultOpts.scales,
+        y: { ...defaultOpts.scales.y, ticks: { callback: v => '$'+(v/1000000).toFixed(1)+'M' } }
+      }
+    }
+  });
+
+  // ── R&O Customer Cumulative
+  makeChart('ro-cust-chart', {
+    type: 'line',
+    data: {
+      labels: ['Q1 FY27', 'Q2 FY27', 'Q3 FY27', 'Q4 FY27'],
+      datasets: [
+        lineDataset('Max Cust Risk (cum.)', roCustMax, COLORS.red, false, true),
+        lineDataset('Most Likely (cum.)', roCustML, COLORS.amber, true)
+      ]
+    },
+    options: { ...defaultOpts,
+      scales: { ...defaultOpts.scales,
+        y: { ...defaultOpts.scales.y, ticks: { callback: v => fmt(v) } }
+      }
+    }
+  });
+
+  // ── FY27 Quarterly: Base vs Risk-Adjusted Customers
+  // FY26 exit (Jul-26): QBSE 213386 + QBSP 92035 + Lite ~6K ≈ 311K
+  // Quarter-end subs: Q1=Oct-26, Q2=Jan-27, Q3=Apr-27, Q4=Jul-27
+  // QBSE Q-ends:  203237, 194357, 184571, 174477
+  // QBSP Q-ends:   82974,  81426,  73385,  69678
+  // Lite Q-ends:    8073,  27374,  75334, 108947
+  // Base total:   294284, 303157, 333290, 353102
+  // roCustML cumulative: -2212, -11054, -33906, -58620
+  // Risk-adj:     292072, 292103, 299384, 294482
+  const fy26ExitSubs = 311000; // Jul-26 year-end: QBSE+QBSP+Lite combined
+  const roQtrBase   = [fy26ExitSubs, 294284, 303157, 333290, 353102];
+  const roQtrAdj    = [fy26ExitSubs, 292072, 292103, 299384, 294482];
+  const roQtrGap    = roQtrBase.map((v,i) => v - roQtrAdj[i]);
+
+  makeChart('ro-qtr-cust-chart', {
+    type: 'line',
+    data: {
+      labels: ['FY26 Exit (Jul-26)', 'Q1 (Oct-26)', 'Q2 (Jan-27)', 'Q3 (Apr-27)', 'Q4 (Jul-27)'],
+      datasets: [
+        {
+          label: 'Base Plan Customers',
+          data: roQtrBase,
+          borderColor: COLORS.blue,
+          backgroundColor: COLORS.blue + '15',
+          borderWidth: 2.5,
+          pointRadius: 6,
+          pointHoverRadius: 8,
+          tension: 0.3,
+          fill: false
+        },
+        {
+          label: 'Risk-Adjusted Customers (Most Likely)',
+          data: roQtrAdj,
+          borderColor: COLORS.amber,
+          backgroundColor: COLORS.amber + '15',
+          borderWidth: 2.5,
+          borderDash: [6, 4],
+          pointRadius: 6,
+          pointHoverRadius: 8,
+          tension: 0.3,
+          fill: false
+        },
+        {
+          label: 'Risk Gap (customers at risk)',
+          data: roQtrGap,
+          borderColor: COLORS.red,
+          backgroundColor: COLORS.red + '25',
+          borderWidth: 0,
+          pointRadius: 0,
+          type: 'bar',
+          yAxisID: 'y2',
+          order: 10
+        }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { position: 'bottom', labels: { boxWidth: 12, padding: 10, font: {size:11} } },
+        tooltip: { callbacks: { label: ctx => ` ${ctx.dataset.label}: ${fmt(Math.abs(ctx.raw))}${ctx.dataset.yAxisID==='y2'?' at risk':''}` } }
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { font:{size:11} } },
+        y: {
+          position: 'left',
+          grid: { color: '#f0f4f8' },
+          ticks: { font:{size:11}, callback: v => Math.round(v/1000)+'K' },
+          title: { display: true, text: 'Total Subscribers', font:{size:11} }
+        },
+        y2: {
+          position: 'right',
+          grid: { display: false },
+          ticks: { font:{size:11}, callback: v => fmt(v) },
+          title: { display: true, text: 'Risk Gap (customers)', font:{size:11}, color: COLORS.red }
+        }
+      }
+    }
+  });
+
+  // ── FY27 Quarterly: Base vs Risk-Adjusted Revenue
+  // Q1 (Aug-Oct-26): QBSE 13,529,277 + QBSP 4,441,835 = 17,971,112
+  // Q2 (Nov-Jan-27): QBSE 12,703,949 + QBSP 4,780,556 = 17,484,505
+  // Q3 (Feb-Apr-27): QBSE 11,378,261 + QBSP 5,805,982 = 17,184,243
+  // Q4 (May-Jul-27): QBSE 11,441,769 + QBSP 7,782,125 = 19,223,894
+  // roRevML quarterly impacts: -396041, -682941, -1389937, -2770949
+  const roQtrRevBase = [17971112, 17484505, 17184243, 19223894];
+  const roQtrRevAdj  = [17575071, 16801564, 15794306, 16452945];
+
+  makeChart('ro-qtr-rev-chart', {
+    type: 'line',
+    data: {
+      labels: ['Q1 FY27 (Oct-26)', 'Q2 FY27 (Jan-27)', 'Q3 FY27 (Apr-27)', 'Q4 FY27 (Jul-27)'],
+      datasets: [
+        {
+          label: 'Base Plan Revenue',
+          data: roQtrRevBase,
+          borderColor: COLORS.blue,
+          backgroundColor: 'transparent',
+          borderWidth: 2.5,
+          pointRadius: 6,
+          pointHoverRadius: 8,
+          tension: 0.3,
+          fill: false
+        },
+        {
+          label: 'Risk-Adjusted Revenue (Most Likely)',
+          data: roQtrRevAdj,
+          borderColor: COLORS.amber,
+          backgroundColor: 'transparent',
+          borderWidth: 2.5,
+          borderDash: [6, 4],
+          pointRadius: 6,
+          pointHoverRadius: 8,
+          tension: 0.3,
+          fill: false
+        }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { position: 'bottom', labels: { boxWidth: 12, padding: 10, font: {size:11} } },
+        tooltip: { callbacks: { label: ctx => ` ${ctx.dataset.label}: $${(ctx.raw/1000000).toFixed(1)}M` } }
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { font:{size:11} } },
+        y: {
+          grid: { color: '#f0f4f8' },
+          ticks: { font:{size:11}, callback: v => '$'+(v/1000000).toFixed(0)+'M' }
+        }
+      }
+    }
+  });
+}
+
+// ══════════════════════════════════════════
+// TABLES
+// ══════════════════════════════════════════
+function cellClass(v) {
+  if (typeof v === 'number' && v < 0) return ' class="neg"';
+  if (typeof v === 'number' && v > 0) return ' class="pos"';
+  return '';
+}
+function numCell(v) {
+  if (v === null || v === undefined) return `<td>—</td>`;
+  return `<td${cellClass(v)}>${fmt(v)}</td>`;
+}
+
+function buildLELTable() {
+  const revCell = (v, cls='') => v == null ? `<td${cls}>—</td>` : `<td${cls}>$${fmt(v)}</td>`;
+  const rows = [
+    { label:'QBSE Subs (Ending)', fy26: qbse.subs_fy26, fy27: qbse.subs_fy27 },
+    { label:'QBSP+Lite Subs (Ending)', fy26: qbspLite.subs_fy26, fy27: qbspLite.subs_fy27 },
+    { label:'Combined Subs', fy26: lel.subs_fy26, fy27: lel.subs_fy27, bold: true },
+    { label:'QBSP+Lite GNS', fy26: qbspLite.gns_fy26, fy27: qbspLite.gns_fy27 },
+    { label:'QBSE GNS', fy26: qbse.gns_fy26, fy27: qbse.gns_fy27 },
+    { label:'Combined GNS', fy26: lel.gns_fy26, fy27: lel.gns_fy27, bold: true },
+    { label:'QBSP+Lite Net Cancel', fy26: qbspLite.cancel_fy26, fy27: qbspLite.cancel_fy27 },
+    { label:'QBSE Attrition', fy26: qbse.attrit_fy26, fy27: qbse.attrit_fy27 },
+    { label:'Combined Net Cancel/Attrit', fy26: lel.cancel_fy26, fy27: lel.cancel_fy27, bold: true },
+    { label:'QBSE Revenue ($)', fy26: qbse.rev_fy26, fy27: qbse.rev_fy27, isRev: true },
+    { label:'QBSP Revenue ($)', fy26: qbsp.rev_fy26, fy27: qbsp.rev_fy27, isRev: true },
+    { label:'QB Lite Revenue ($)', fy26: qbl.rev_fy26, fy27: qbl.rev_fy27, isRev: true },
+    { label:'Combined Revenue ($)', fy26: lel.rev_fy26, fy27: lel.rev_fy27, bold: true, isRev: true }
+  ];
+  const tbody = document.getElementById('lel-sub-table-body');
+  tbody.innerHTML = rows.map(r => {
+    const cls = r.bold ? ' class="total-row"' : '';
+    const cell26 = (v) => r.isRev ? revCell(v) : numCell(v);
+    const cell27 = (v) => r.isRev ? revCell(v, ' class="fy27-col"') : `<td class="fy27-col"${cellClass(v)}>${fmt(v)}</td>`;
+    return `<tr${cls}><td>${r.label}</td>${r.fy26.map(cell26).join('')}${r.fy27.map(cell27).join('')}</tr>`;
+  }).join('');
+}
+
+function buildQBSETable() {
+  const rows = [
+    { label:'GNS', fy26: qbse.gns_fy26, fy27: qbse.gns_fy27 },
+    { label:'Attrition', fy26: qbse.attrit_fy26, fy27: qbse.attrit_fy27 },
+    { label:'Ending Subs', fy26: qbse.subs_fy26, fy27: qbse.subs_fy27, bold: true },
+    { label:'Monthly Churn %', fy26: qbse.churn_fy26, fy27: qbse.churn_fy27, isPercent: true }
+  ];
+  const tbody = document.getElementById('qbse-table-body');
+  tbody.innerHTML = rows.map(r => {
+    const cls = r.bold ? ' class="total-row"' : '';
+    const cell = (v) => {
+      if (r.isPercent) return v == null ? '<td>—</td>' : `<td class="neg">${typeof v === 'number' ? v.toFixed(1) : v}%</td>`;
+      return numCell(v);
+    };
+    const cellFY27 = (v) => {
+      if (r.isPercent) return v == null ? '<td class="fy27-col">—</td>' : `<td class="fy27-col neg">${typeof v === 'number' ? v.toFixed(1) : v}%</td>`;
+      return `<td class="fy27-col"${cellClass(v)}>${fmt(v)}</td>`;
+    };
+    const annualSuffix = (() => {
+      if (!r.isPercent) return '<td style="background:#f9f9f9">—</td><td class="fy27-col" style="background:#f9f9f9">—</td>';
+      const avg26 = r.fy26.filter(v=>v!=null);
+      const avg27 = r.fy27.filter(v=>v!=null);
+      const mo26  = avg26.reduce((a,b)=>a+b,0)/avg26.length/100;
+      const mo27  = avg27.reduce((a,b)=>a+b,0)/avg27.length/100;
+      const mo26s = (avg26.reduce((a,b)=>a+b,0)/avg26.length).toFixed(1)+'% mo';
+      const mo27s = (avg27.reduce((a,b)=>a+b,0)/avg27.length).toFixed(1)+'% mo';
+      const ann26 = ((1-(1+mo26)**12)*100).toFixed(0)+'% ann.';
+      const ann27 = ((1-(1+mo27)**12)*100).toFixed(0)+'% ann.';
+      return `<td class="neg" style="font-size:11px;line-height:1.4">${mo26s}<br><span style="font-size:10px;color:#888">${ann26}</span></td><td class="fy27-col neg" style="font-size:11px;line-height:1.4">${mo27s}<br><span style="font-size:10px;color:#888">${ann27}</span></td>`;
+    })();
+    return `<tr${cls}><td>${r.label}</td>${r.fy26.map(cell).join('')}${r.fy27.map(cellFY27).join('')}${annualSuffix}</tr>`;
+  }).join('');
+}
+
+function buildQBSPTable() {
+  const rows = [
+    { label:'QBSP GNS', fy26: qbsp.gns_fy26, fy27: qbsp.gns_fy27 },
+    { label:'QB Lite GNS', fy26: qbl.gns_fy26, fy27: qbl.gns_fy27 },
+    { label:'Combined GNS', fy26: qbspLite.gns_fy26, fy27: qbspLite.gns_fy27, bold: true },
+    { label:'QBSP Net Cancellations', fy26: qbsp.cancel_fy26, fy27: qbsp.cancel_fy27 },
+    { label:'QB Lite Net Cancellations', fy26: qbl.cancel_fy26, fy27: Array(12).fill(null) },
+    { label:'QBSP Ending Subs', fy26: qbsp.subs_fy26, fy27: qbsp.subs_fy27 },
+    { label:'QB Lite Ending Subs', fy26: qbl.subs_fy26, fy27: qbl.subs_fy27 },
+    { label:'QBSP+Lite Combined Subs', fy26: qbspLite.subs_fy26, fy27: qbspLite.subs_fy27, bold: true },
+    { label:'QBSP Revenue ($)', fy26: qbsp.rev_fy26, fy27: qbsp.rev_fy27, isRev: true },
+    { label:'QB Lite Revenue ($)', fy26: qbl.rev_fy26, fy27: qbl.rev_fy27, isRev: true },
+    { label:'QBSP Churn %', fy26: qbsp.churn_fy26, fy27: qbsp.churn_fy27, isPercent: true },
+    { label:'QBSP+Lite Combined Churn %', fy26: Array(12).fill(null), fy27: qbspLiteChurn27, isPercent: true, bold: true }
+  ];
+  const tbody = document.getElementById('qbsp-table-body');
+  tbody.innerHTML = rows.map(r => {
+    const cls = r.bold ? ' class="total-row"' : '';
+    const cell = (v) => {
+      if (r.isRev) return v == null ? '<td>—</td>' : `<td>$${fmt(v)}</td>`;
+      if (r.isPercent) return v == null ? '<td>—</td>' : `<td class="neg">${v.toFixed(1)}%</td>`;
+      return numCell(v);
+    };
+    const cellFY27 = (v) => {
+      if (r.isRev) return v == null ? '<td class="fy27-col">—</td>' : `<td class="fy27-col">$${fmt(v)}</td>`;
+      if (r.isPercent) return v == null ? '<td class="fy27-col">—</td>' : `<td class="fy27-col neg">${v.toFixed(1)}%</td>`;
+      return `<td class="fy27-col"${cellClass(v)}>${fmt(v)}</td>`;
+    };
+    // Annual avg for churn rows
+    const annualSuffix = (() => {
+      if (!r.isPercent) return '<td style="background:#f9f9f9">—</td><td class="fy27-col" style="background:#f9f9f9">—</td>';
+      const avg26 = r.fy26.filter(v=>v!=null);
+      const avg27 = r.fy27.filter(v=>v!=null);
+      const mo26  = avg26.length ? avg26.reduce((a,b)=>a+b,0)/avg26.length/100 : null;
+      const mo27  = avg27.length ? avg27.reduce((a,b)=>a+b,0)/avg27.length/100 : null;
+      const mo26s = mo26 != null ? (avg26.reduce((a,b)=>a+b,0)/avg26.length).toFixed(1)+'% mo' : '—';
+      const mo27s = mo27 != null ? (avg27.reduce((a,b)=>a+b,0)/avg27.length).toFixed(1)+'% mo' : '—';
+      const ann26 = mo26 != null ? ((1-(1+mo26)**12)*100).toFixed(0)+'% ann.' : '';
+      const ann27 = mo27 != null ? ((1-(1+mo27)**12)*100).toFixed(0)+'% ann.' : '';
+      return `<td class="neg" style="font-size:11px;line-height:1.4">${mo26s}<br><span style="font-size:10px;color:#888">${ann26}</span></td><td class="fy27-col neg" style="font-size:11px;line-height:1.4">${mo27s}<br><span style="font-size:10px;color:#888">${ann27}</span></td>`;
+    })();
+    return `<tr${cls}><td>${r.label}</td>${r.fy26.map(cell).join('')}${r.fy27.map(cellFY27).join('')}${annualSuffix}</tr>`;
+  }).join('');
+}
+
+function buildQBLiteTable() {
+  const dash = v => v == null || v === 0 ? '—' : fmt(v);
+  const rows = [
+    { label:'Total GNS', fy26: qbl.gns_fy26, fy27: qbl.gns_fy27 },
+    { label:'Net Cancellations', fy26: qbl.cancel_fy26, fy27: Array(12).fill(null) },
+    { label:'Total Ending Subs', fy26: qbl.subs_fy26, fy27: qbl.subs_fy27, bold: true },
+    { label:'Monthly Revenue ($)', fy26: qbl.rev_fy26, fy27: qbl.rev_fy27, bold: true, isRev: true }
+  ];
+  const tbody = document.getElementById('qbl-table-body');
+  if (!tbody) return;
+  tbody.innerHTML = rows.map(r => {
+    const cls = r.bold ? ' class="total-row"' : '';
+    const cell = (v, i) => {
+      if (r.isRev) return `<td>${v == null || v === 0 ? '—' : '$'+fmt(v)}</td>`;
+      if (v == null) return `<td style="color:var(--muted)">—</td>`;
+      return numCell(v);
+    };
+    const cellFY27 = (v, i) => {
+      if (r.isRev) return `<td class="fy27-col" style="color:var(--muted)">TBD</td>`;
+      if (v == null) return `<td class="fy27-col" style="color:var(--muted)">—</td>`;
+      return `<td class="fy27-col"${cellClass(v)}>${fmt(v)}</td>`;
+    };
+    return `<tr${cls}><td>${r.label}</td>${r.fy26.map(cell).join('')}${r.fy27.map(cellFY27).join('')}</tr>`;
+  }).join('');
+}
+
+function buildTransitionTable() {
+  const channels = [
+    { key:'digital',    label:'Digital/Web' },
+    { key:'mobile',     label:'Mobile (App Store)' },
+    { key:'extPartner', label:'External Partner' },
+    { key:'intPartner', label:'Internal Partner' },
+    { key:'accountant', label:'Accountant' }
+  ];
+  const fy27m = ['Aug-26','Sep-26','Oct-26','Nov-26','Dec-26','Jan-27','Feb-27','Mar-27','Apr-27','May-27','Jun-27','Jul-27'];
+  const tbody = document.getElementById('transition-table-body');
+  if (!tbody) return;  // element removed; transition plan now rendered as static HTML
+  tbody.innerHTML = channels.map(ch => {
+    const sp  = transitionPlan[ch.key].qbsp;
+    const lit = transitionPlan[ch.key].lite;
+    const cells = sp.map((v,i) => `<td><span style="color:var(--blue);font-weight:600">${v}%</span> / <span style="color:var(--teal);font-weight:600">${lit[i]}%</span></td>`).join('');
+    return `<tr><td style="text-align:left;font-weight:500">${ch.label}</td>${cells}</tr>`;
+  }).join('');
+  // Add legend row
+  tbody.insertAdjacentHTML('afterbegin', `<tr style="background:#f8fafc"><td style="text-align:left;color:var(--muted);font-size:11px">QBSP% / Lite%</td>${fy27m.map(() => '<td></td>').join('')}</tr>`);
+}
+
+function buildGNSBuildTable() {
+  const rows = [
+    // Web
+    {chan:'Web/OA', init:'Baseline', type:'QBSP', q:gnsBuild.web.baseline.q, fy:gnsBuild.web.baseline.fy, rowClass:'initiative-row-baseline'},
+    {chan:'Web/OA', init:'Freemium Conversion', type:'Lite', q:gnsBuild.web.freemium.q, fy:gnsBuild.web.freemium.fy, rowClass:'initiative-row-lite'},
+    {chan:'Web/OA', init:'Lite Standalone', type:'Lite', q:gnsBuild.web.liteStand.q, fy:gnsBuild.web.liteStand.fy, rowClass:'initiative-row-lite'},
+    {chan:'Web/OA', init:'Web Growth Optimization', type:'QBSP', q:gnsBuild.web.webgrowth.q, fy:gnsBuild.web.webgrowth.fy, rowClass:'initiative-row-baseline'},
+    {chan:'Web/OA', init:'Full Funnel Marketing', type:'QBSP', q:gnsBuild.web.fullfunnel.q, fy:gnsBuild.web.fullfunnel.fy, rowClass:'initiative-row-baseline'},
+    {chan:'', init:'Web/OA Total', type:'', q:gnsBuild.web.baseline.q.map((_,i)=>gnsBuild.web.baseline.q[i]+gnsBuild.web.freemium.q[i]+gnsBuild.web.liteStand.q[i]+gnsBuild.web.webgrowth.q[i]+gnsBuild.web.fullfunnel.q[i]), fy:gnsBuild.web.baseline.fy+gnsBuild.web.freemium.fy+gnsBuild.web.liteStand.fy+gnsBuild.web.webgrowth.fy+gnsBuild.web.fullfunnel.fy, rowClass:'initiative-row-total'},
+    // Mobile
+    {chan:'Mobile', init:'Baseline', type:'QBSP', q:gnsBuild.mobile.baseline.q, fy:gnsBuild.mobile.baseline.fy, rowClass:'initiative-row-baseline'},
+    {chan:'Mobile', init:'Freemium Conversion', type:'Lite', q:gnsBuild.mobile.freemium.q, fy:gnsBuild.mobile.freemium.fy, rowClass:'initiative-row-lite'},
+    {chan:'Mobile', init:'Lite Standalone', type:'Lite', q:gnsBuild.mobile.liteStand.q, fy:gnsBuild.mobile.liteStand.fy, rowClass:'initiative-row-lite'},
+    {chan:'Mobile', init:'Reimagine Mobile', type:'Lite', q:gnsBuild.mobile.reimagine.q, fy:gnsBuild.mobile.reimagine.fy, rowClass:'initiative-row-lite'},
+    {chan:'Mobile', init:'Full Funnel Marketing', type:'QBSP', q:gnsBuild.mobile.fullfunnel.q, fy:gnsBuild.mobile.fullfunnel.fy, rowClass:'initiative-row-baseline'},
+    {chan:'', init:'Mobile Total', type:'', q:gnsBuild.mobile.baseline.q.map((_,i)=>gnsBuild.mobile.baseline.q[i]+gnsBuild.mobile.freemium.q[i]+gnsBuild.mobile.liteStand.q[i]+gnsBuild.mobile.reimagine.q[i]+gnsBuild.mobile.fullfunnel.q[i]), fy:gnsBuild.mobile.baseline.fy+gnsBuild.mobile.freemium.fy+gnsBuild.mobile.liteStand.fy+gnsBuild.mobile.reimagine.fy+gnsBuild.mobile.fullfunnel.fy, rowClass:'initiative-row-total'},
+    // Partnerships
+    {chan:'Partnerships', init:'Baseline', type:'QBSP', q:gnsBuild.partnerships.baseline.q, fy:gnsBuild.partnerships.baseline.fy, rowClass:'initiative-row-baseline'},
+    {chan:'Partnerships', init:'E3B Lite (Biz Tax)', type:'Lite', q:gnsBuild.partnerships.e3bLite.q, fy:gnsBuild.partnerships.e3bLite.fy, rowClass:'initiative-row-lite'},
+    {chan:'', init:'Partnerships Total', type:'', q:gnsBuild.partnerships.baseline.q.map((_,i)=>gnsBuild.partnerships.baseline.q[i]+gnsBuild.partnerships.e3bLite.q[i]), fy:gnsBuild.partnerships.baseline.fy+gnsBuild.partnerships.e3bLite.fy, rowClass:'initiative-row-total'},
+    // Retention
+    {chan:'Retention', init:'Freemium Saves (ELM)', type:'Lite', q:gnsBuild.retention.freemiumSaves.q, fy:gnsBuild.retention.freemiumSaves.fy, rowClass:'initiative-row-lite'},
+    // Grand Total
+    {chan:'', init:'GRAND TOTAL GNS', type:'', q:[19480,36376,68725,66891], fy:191472, rowClass:'initiative-row-total'}
+  ];
+  const tbody = document.getElementById('gns-build-table-body');
+  tbody.innerHTML = rows.map(r => {
+    const typeBadge = r.type === 'Lite' ? '<span class="pill pill-lite" style="font-size:10px">Lite</span>' :
+                      r.type === 'QBSP' ? '<span class="pill pill-qbsp" style="font-size:10px">QBSP</span>' : '';
+    return `<tr class="${r.rowClass}">
+      <td>${r.chan}</td>
+      <td>${r.init}</td>
+      <td>${typeBadge}</td>
+      <td>${fmt(r.q[0])}</td>
+      <td>${fmt(r.q[1])}</td>
+      <td>${fmt(r.q[2])}</td>
+      <td>${fmt(r.q[3])}</td>
+      <td><strong>${fmt(r.fy)}</strong></td>
+    </tr>`;
+  }).join('');
+}
+
+function buildQBFreeTable() {
+  const rows = [
+    { label: 'Signups',  source: 'Yash',  data: qbFree.signups, total: qbFreeTotals.signups,  totalNote: 'cumul.', noDecimal: true },
+    { label: 'MAU',      source: 'Yash',  data: qbFree.mau,     total: qbFreeTotals.mau,       totalNote: 'EoY',    noDecimal: true },
+    { label: 'GNS',      source: 'Ryan',  data: qbFree.gns,     total: qbFreeTotals.gns,       totalNote: 'cumul.', noDecimalTotal: true },
+    { label: 'GNA',      source: 'David', data: qbFree.gna,     total: qbFreeTotals.gna,       totalNote: 'cumul.', noDecimalTotal: true }
+  ];
+  const fmtK     = v => v >= 1000 ? (v/1000).toFixed(1)+'K' : v.toLocaleString();
+  const fmtKInt  = v => v >= 1000 ? Math.round(v/1000)+'K'  : v.toLocaleString();
+  const tbody = document.getElementById('qbfree-monthly-body');
+  if (!tbody) return;
+  tbody.innerHTML = rows.map(r => {
+    const cellFmt  = r.noDecimal ? fmtKInt : fmtK;
+    const totalFmt = (r.noDecimal || r.noDecimalTotal) ? fmtKInt : fmtK;
+    return `<tr>
+      <td style="text-align:left;font-weight:600;white-space:nowrap">${r.label}</td>
+      <td style="text-align:left;font-size:11px;color:var(--muted);white-space:nowrap">${r.source}</td>
+      ${r.data.map(v => `<td>${cellFmt(v)}</td>`).join('')}
+      <td style="background:#F4F7FF;font-weight:700;color:var(--navy)">${totalFmt(r.total)} <span style="font-size:10px;font-weight:400;color:var(--muted)">${r.totalNote}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+function buildROTable() {
+  const confColor = {High:'badge-high', Medium:'badge-med', Low:'badge-low'};
+  const tbody = document.getElementById('ro-table-body');
+  tbody.innerHTML = roItems.map(r => `<tr>
+    <td>${r.desc}</td>
+    <td><span class="badge badge-risk">${r.type}</span></td>
+    <td>${r.product}</td>
+    <td>${r.year}</td>
+    <td><span class="badge ${confColor[r.confLabel]}">${r.conf} ${r.confLabel}</span></td>
+    <td class="neg">${r.revMax}</td>
+    <td class="neg">${r.revML}</td>
+    <td class="neg">${r.custMax}</td>
+    <td style="color:var(--muted);font-size:11px">${r.notes}</td>
+  </tr>`).join('');
+}
+
+// ══════════════════════════════════════════
+// R&O TOGGLE
+// ══════════════════════════════════════════
+function roSwitch(view) {
+  const showList = view === 'list';
+  document.getElementById('ro-view-list').style.display = showList ? '' : 'none';
+  document.getElementById('ro-view-net').style.display  = showList ? 'none' : '';
+  const btnList = document.getElementById('ro-toggle-list');
+  const btnNet  = document.getElementById('ro-toggle-net');
+  if (showList) {
+    btnList.style.background = '#236CFF'; btnList.style.color = '#fff';
+    btnNet.style.background  = '#fff';    btnNet.style.color  = '#236CFF';
+  } else {
+    btnNet.style.background  = '#236CFF'; btnNet.style.color  = '#fff';
+    btnList.style.background = '#fff';    btnList.style.color = '#236CFF';
+  }
+}
+
+// TAB SWITCHING
+// ══════════════════════════════════════════
+function switchTab(name) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('updated-date').textContent = new Date().toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
+  buildLELTable();
+  buildQBSETable();
+  buildQBSPTable();
+  buildQBFreeTable();
+  buildTransitionTable();
+  buildGNSBuildTable();
+  buildROTable();
+  initCharts();
+});
+</script>
+</body>
+</html>
