@@ -231,6 +231,22 @@
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+
+    /* Quarterly table styles */
+    .qtable { width:100%; border-collapse:collapse; font-size:12px; }
+    .qtable th { background:#E8EBF0; color:#1A1D23; font-weight:700; padding:6px 8px; text-align:right; white-space:nowrap; border-bottom:1px solid #C8CDD8; }
+    .qtable th:first-child { text-align:left; }
+    .qtable th.fy27-q, .qtable th.fy27-total { background:#D8E4FF; }
+    .qtable td { padding:5px 8px; text-align:right; border-bottom:1px solid #F0F2F5; vertical-align:top; background:#fff; }
+    .qtable td:first-child { text-align:left; font-weight:600; color:var(--navy); }
+    .qtable .fy27-q { background:#F4F8FF; }
+    .qtable .fy-total { font-weight:700; background:#F5F7FA; }
+    .qtable .fy27-total { background:#EEF3FF; font-weight:700; border-left:2px solid #236CFF; }
+    .qtable .q-start { border-left:2px solid #D4D9E5; }
+    .qtable th.q-start { border-left:2px solid #BEC6D5; }
+    .qtable .yoy { font-size:11px; font-weight:600; }
+    .qtable .pos { color:#00A650; } .qtable .neg { color:#D52B1E; }
+    .qoq-label { font-size:9px; display:block; margin-top:2px; font-weight:600; }
   </style>
 </head>
 <body>
@@ -368,6 +384,8 @@
       <div class="chart-wrap"><canvas id="lel-rev-mix-chart"></canvas></div>
     </div>
   </div>
+
+  <div id="lel-quarterly" class="table-card" style="margin-top:8px"></div>
 
   <div class="table-card">
     <h3>Low End Lineup — Monthly Subscriber Summary</h3>
@@ -591,25 +609,9 @@
     </div>
   </div>
 
-  <!-- Churn summary callout (monthly + annual) -->
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border-radius:10px;overflow:hidden;border:1px solid var(--border);margin-bottom:12px">
-    <div style="background:var(--bg);padding:8px 14px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid var(--border)">
-      <span>QBSP Churn — FY26</span><span>QBSP+Lite Churn — FY27</span><span>Note</span>
-    </div>
-    <div style="background:#fff;padding:12px 14px">
-      <div style="font-size:22px;font-weight:700;color:var(--amber);line-height:1">-6.9%</div>
-      <div style="font-size:11px;color:var(--muted);margin-top:3px">Avg monthly</div>
-      <div style="font-size:11px;color:var(--amber);font-weight:600;margin-top:4px">~58% annual</div>
-    </div>
-    <div style="background:#fff;padding:12px 14px">
-      <div style="font-size:22px;font-weight:700;color:var(--amber);line-height:1">-5.9%</div>
-      <div style="font-size:11px;color:var(--muted);margin-top:3px">Avg monthly (combined)</div>
-      <div style="font-size:11px;color:var(--amber);font-weight:600;margin-top:4px">~52% annual</div>
-    </div>
-    <div style="background:#fff;padding:12px 14px;font-size:11px;color:var(--muted);line-height:1.5">
-      Monthly detail in table below.<br>Annual = 1−(1+monthly)¹².<br>FY27 elevated by E3B migration.
-    </div>
-  </div>
+
+
+  <div id="qbsp-quarterly" class="table-card" style="margin-top:8px"></div>
 
   <!-- Monthly Detail (moved to bottom) -->
   <div class="table-card" style="margin-top:8px">
@@ -623,8 +625,8 @@
           <th>Sep-25<br><span class="actual-badge">Act</span></th>
           <th>Oct-25<br><span class="actual-badge">Act</span></th>
           <th>Nov-25<br><span class="actual-badge">Act</span></th>
-          <th>Dec-25*<br><span class="actual-badge">Deriv</span></th>
-          <th>Jan-26*<br><span class="actual-badge">Deriv</span></th>
+          <th>Dec-25*<br><span class="actual-badge">Act</span></th>
+          <th>Jan-26*<br><span class="actual-badge">Act</span></th>
           <th>Feb-26<br><span class="actual-badge">Act</span></th>
           <th>Mar-26<br><span class="actual-badge">Act</span></th>
           <th>Apr-26<br><span class="actual-badge">Act</span></th>
@@ -752,6 +754,8 @@
       <div class="chart-wrap"><canvas id="qbse-attrit-chart"></canvas></div>
     </div>
   </div>
+
+  <div id="qbse-quarterly" class="table-card" style="margin-top:8px"></div>
 
   <div class="table-card">
     <h3>QBSE — Monthly Detail</h3>
@@ -897,6 +901,8 @@
     </div>
     <div class="chart-wrap" style="height:300px"><canvas id="qbfree-combined-chart"></canvas></div>
   </div>
+
+  <div id="qbfree-quarterly" class="table-card" style="margin-top:8px"></div>
 
   <!-- Monthly detail table: all 4 metrics -->
   <div class="table-card" style="margin-top:8px">
@@ -2263,8 +2269,6 @@ function buildQBSPTable() {
     { label:'QBSP+Lite Combined Subs', fy26: qbspLite.subs_fy26, fy27: qbspLite.subs_fy27, bold: true },
     { label:'QBSP Revenue ($)', fy26: qbsp.rev_fy26, fy27: qbsp.rev_fy27, isRev: true },
     { label:'QB Lite Revenue ($)', fy26: qbl.rev_fy26, fy27: qbl.rev_fy27, isRev: true },
-    { label:'QBSP Churn %', fy26: qbsp.churn_fy26, fy27: qbsp.churn_fy27, isPercent: true },
-    { label:'QBSP+Lite Combined Churn %', fy26: Array(12).fill(null), fy27: qbspLiteChurn27, isPercent: true, bold: true }
   ];
   const tbody = document.getElementById('qbsp-table-body');
   tbody.innerHTML = rows.map(r => {
@@ -2463,8 +2467,251 @@ document.addEventListener('DOMContentLoaded', () => {
   buildTransitionTable();
   buildGNSBuildTable();
   buildROTable();
+  buildAllQuarterlyTables();
   initCharts();
 });
+
+function buildAllQuarterlyTables() {
+  const QQ = [[0,1,2],[3,4,5],[6,7,8],[9,10,11]];
+  const fmtK = v => v == null ? '—' : (Math.abs(v)>=1000 ? (v/1000).toFixed(1)+'K' : v.toFixed(0));
+  const fmtM = v => v == null ? '—' : '$'+(v/1e6).toFixed(1)+'M';
+  const pct = (v, dp=1) => v == null ? '—' : v.toFixed(dp)+'%';
+  const yoyColor = (v, higherIsBetter) => {
+    if (v == null || !isFinite(v)) return '';
+    const good = higherIsBetter ? v > 0 : v < 0;
+    return good ? 'pos' : 'neg';
+  };
+  const yoyPct = v => v == null || !isFinite(v) ? '—' : (v>0?'+':'')+Math.round(v*100)+'%';
+  const ppDiff = (a,b) => (a==null||b==null) ? null : a - b;
+
+  function sumQ(arr, qi) {
+    return QQ[qi].reduce((s,i) => s + (arr[i]||0), 0);
+  }
+  function eofQ(arr, qi) { return arr[QQ[qi][2]]; }
+
+  function calcInitSubs(subs0, gns0, att0) {
+    return subs0 - (gns0||0) - (att0||0);
+  }
+
+  function compoundChurn(monthlyArr, qi) {
+    const indices = QQ[qi];
+    let prod = 1;
+    for (const i of indices) {
+      if (monthlyArr[i] == null) return null;
+      prod *= (1 + monthlyArr[i]/100);
+    }
+    return (prod - 1) * 100;
+  }
+
+  function quarterlyMetrics(gns, att, subs, churnMonthly) {
+    const init = calcInitSubs(subs[0], gns[0], att ? att[0] : 0);
+    const qs = QQ.map((_, qi) => {
+      const q_gns = sumQ(gns, qi);
+      const q_att = att ? sumQ(att, qi) : null;
+      const q_subs = eofQ(subs, qi);
+      const begin = qi === 0 ? init : eofQ(subs, qi-1);
+      const q_churn = att ? (q_att / (begin + q_gns) * 100) : (churnMonthly ? compoundChurn(churnMonthly, qi) : null);
+      return { gns: q_gns, att: q_att, subs: q_subs, churn: q_churn };
+    });
+    const fy_gns = gns.reduce((s,v)=>s+(v||0),0);
+    const fy_att = att ? att.reduce((s,v)=>s+(v||0),0) : null;
+    const fy_subs = subs[11];
+    const fy_churn = att ? (fy_att / (init + fy_gns) * 100) : (churnMonthly ? (QQ.flatMap(q=>q).reduce((prod,i)=>prod*(1+churnMonthly[i]/100),1)-1)*100 : null);
+    return { qs, fy_gns, fy_att, fy_subs, fy_churn, init };
+  }
+
+  // ── QBSE Quarterly ──
+  (function() {
+    const el = document.getElementById('qbse-quarterly');
+    if (!el) return;
+    const f26 = quarterlyMetrics(qbse.gns_fy26, qbse.attrit_fy26, qbse.subs_fy26, qbse.churn_fy26);
+    const f27 = quarterlyMetrics(qbse.gns_fy27, qbse.attrit_fy27, qbse.subs_fy27, qbse.churn_fy27);
+
+    const rows = [
+      { label: 'GNS', channel: '', fy26q: f26.qs.map(q=>q.gns), fy26fy: f26.fy_gns, fy27q: f27.qs.map(q=>q.gns), fy27fy: f27.fy_gns, fmt: fmtK, higherBetter: true, isChurn: false },
+      { label: 'Net Attrition', channel: '', fy26q: f26.qs.map(q=>q.att), fy26fy: f26.fy_att, fy27q: f27.qs.map(q=>q.att), fy27fy: f27.fy_att, fmt: fmtK, higherBetter: false, isChurn: false, isAtt: true },
+      { label: 'Subs EoQ', channel: '', fy26q: f26.qs.map(q=>q.subs), fy26fy: f26.fy_subs, fy27q: f27.qs.map(q=>q.subs), fy27fy: f27.fy_subs, fmt: fmtK, higherBetter: false, isChurn: false },
+      { label: 'Churn %', channel: '(quarterly)', fy26q: f26.qs.map(q=>q.churn), fy26fy: f26.fy_churn, fy27q: f27.qs.map(q=>q.churn), fy27fy: f27.fy_churn, fmt: v=>pct(v,1), higherBetter: false, isChurn: true },
+      { label: 'Revenue', channel: '', fy26q: QQ.map((_,qi)=>sumQ(qbse.rev_fy26,qi)), fy26fy: qbse.rev_fy26.reduce((s,v)=>s+(v||0),0), fy27q: QQ.map((_,qi)=>sumQ(qbse.rev_fy27,qi)), fy27fy: qbse.rev_fy27.reduce((s,v)=>s+(v||0),0), fmt: fmtM, higherBetter: true }
+    ];
+
+    el.innerHTML = renderQuarterTable('QBSE — Quarterly View', rows, false);
+  })();
+
+  // ── QBSP+Lite Quarterly ──
+  (function() {
+    const el = document.getElementById('qbsp-quarterly');
+    if (!el) return;
+    const cGns26 = qbspLite.gns_fy26, cGns27 = qbspLite.gns_fy27;
+    const cAtt26 = qbspLite.cancel_fy26, cAtt27 = qbsp.cancel_fy27;
+    const cSubs26 = qbspLite.subs_fy26, cSubs27 = qbspLite.subs_fy27;
+
+    const f26c = quarterlyMetrics(cGns26, cAtt26, cSubs26, null);
+    const f27c = quarterlyMetrics(cGns27, cAtt27, cSubs27, null);
+
+    const f26d = quarterlyMetrics(qbsp.gns_fy26, qbsp.cancel_fy26, qbsp.subs_fy26, null);
+    const f27d = quarterlyMetrics(qbsp.gns_fy27, qbsp.cancel_fy27, qbsp.subs_fy27, null);
+
+    const f26l = quarterlyMetrics(qbl.gns_fy26, qbl.cancel_fy26, qbl.subs_fy26, null);
+    const f27l = quarterlyMetrics(qbl.gns_fy27, Array(12).fill(null), qbl.subs_fy27, null);
+
+    const churnQ26 = QQ.map((_,qi) => compoundChurn(qbsp.churn_fy26, qi));
+    const churnFY26 = (QQ.flatMap(q=>q).reduce((prod,i)=>prod*(1+qbsp.churn_fy26[i]/100),1)-1)*100;
+    const churnQ27 = QQ.map((_,qi) => compoundChurn(qbsp.churn_fy27, qi));
+    const churnFY27 = (QQ.flatMap(q=>q).reduce((prod,i)=>prod*(1+qbsp.churn_fy27[i]/100),1)-1)*100;
+
+    const rows = [
+      { label: 'GNS', channel: 'Combined', fy26q: f26c.qs.map(q=>q.gns), fy26fy: f26c.fy_gns, fy27q: f27c.qs.map(q=>q.gns), fy27fy: f27c.fy_gns, fmt: fmtK, higherBetter: true },
+      { label: '', channel: 'QBSP Direct', fy26q: f26d.qs.map(q=>q.gns), fy26fy: f26d.fy_gns, fy27q: f27d.qs.map(q=>q.gns), fy27fy: f27d.fy_gns, fmt: fmtK, higherBetter: true, indent: true },
+      { label: '', channel: 'QB Lite', fy26q: f26l.qs.map(q=>q.gns), fy26fy: f26l.fy_gns, fy27q: f27l.qs.map(q=>q.gns), fy27fy: f27l.fy_gns, fmt: fmtK, higherBetter: true, indent: true },
+      { label: 'Net Attrition', channel: 'Combined', fy26q: f26c.qs.map(q=>q.att), fy26fy: f26c.fy_att, fy27q: f27c.qs.map(q=>q.att), fy27fy: f27c.fy_att, fmt: fmtK, higherBetter: false, isAtt: true },
+      { label: 'Subs EoQ', channel: 'Combined', fy26q: f26c.qs.map(q=>q.subs), fy26fy: f26c.fy_subs, fy27q: f27c.qs.map(q=>q.subs), fy27fy: f27c.fy_subs, fmt: fmtK, higherBetter: true },
+      { label: '', channel: 'QBSP Direct', fy26q: f26d.qs.map(q=>q.subs), fy26fy: f26d.fy_subs, fy27q: f27d.qs.map(q=>q.subs), fy27fy: f27d.fy_subs, fmt: fmtK, higherBetter: true, indent: true },
+      { label: '', channel: 'QB Lite', fy26q: f26l.qs.map(q=>q.subs), fy26fy: f26l.fy_subs, fy27q: f27l.qs.map(q=>q.subs), fy27fy: f27l.fy_subs, fmt: fmtK, higherBetter: true, indent: true },
+      { label: 'Churn %', channel: '(quarterly, combined)', fy26q: churnQ26, fy26fy: churnFY26, fy27q: churnQ27, fy27fy: churnFY27, fmt: v=>pct(v,1), higherBetter: false, isChurn: true },
+      { label: 'Revenue', channel: 'Combined', fy26q: QQ.map((_,qi)=>sumQ(qbspLite.rev_fy26,qi)), fy26fy: qbspLite.rev_fy26.reduce((s,v)=>s+(v||0),0), fy27q: QQ.map((_,qi)=>sumQ(qbspLite.rev_fy27,qi)), fy27fy: qbspLite.rev_fy27.reduce((s,v)=>s+(v||0),0), fmt: fmtM, higherBetter: true },
+      { label: '', channel: 'QBSP Direct', fy26q: QQ.map((_,qi)=>sumQ(qbsp.rev_fy26,qi)), fy26fy: qbsp.rev_fy26.reduce((s,v)=>s+(v||0),0), fy27q: QQ.map((_,qi)=>sumQ(qbsp.rev_fy27,qi)), fy27fy: qbsp.rev_fy27.reduce((s,v)=>s+(v||0),0), fmt: fmtM, higherBetter: true, indent: true },
+      { label: '', channel: 'QB Lite', fy26q: QQ.map((_,qi)=>sumQ(qbl.rev_fy26,qi)), fy26fy: qbl.rev_fy26.reduce((s,v)=>s+(v||0),0), fy27q: QQ.map((_,qi)=>{ const v=sumQ(qbl.rev_fy27,qi); return v===0?null:v; }), fy27fy: null, fmt: fmtM, higherBetter: true, indent: true }
+    ];
+
+    el.innerHTML = renderQuarterTable('QBSP & QB Lite — Quarterly View', rows, true);
+  })();
+
+  // ── LEL Combined Quarterly ──
+  (function() {
+    const el = document.getElementById('lel-quarterly');
+    if (!el) return;
+    const f26 = quarterlyMetrics(lel.gns_fy26, lel.cancel_fy26, lel.subs_fy26, null);
+    const f27 = quarterlyMetrics(lel.gns_fy27, lel.cancel_fy27, lel.subs_fy27, null);
+    const rows = [
+      { label: 'GNS', channel: '', fy26q: f26.qs.map(q=>q.gns), fy26fy: f26.fy_gns, fy27q: f27.qs.map(q=>q.gns), fy27fy: f27.fy_gns, fmt: fmtK, higherBetter: true },
+      { label: 'Net Attrition', channel: '', fy26q: f26.qs.map(q=>q.att), fy26fy: f26.fy_att, fy27q: f27.qs.map(q=>q.att), fy27fy: f27.fy_att, fmt: fmtK, higherBetter: false, isAtt: true },
+      { label: 'Subs EoQ', channel: '', fy26q: f26.qs.map(q=>q.subs), fy26fy: f26.fy_subs, fy27q: f27.qs.map(q=>q.subs), fy27fy: f27.fy_subs, fmt: fmtK, higherBetter: true },
+      { label: 'Revenue', channel: '', fy26q: QQ.map((_,qi)=>sumQ(lel.rev_fy26,qi)), fy26fy: lel.rev_fy26.reduce((s,v)=>s+(v||0),0), fy27q: QQ.map((_,qi)=>sumQ(lel.rev_fy27,qi)), fy27fy: lel.rev_fy27.reduce((s,v)=>s+(v||0),0), fmt: fmtM, higherBetter: true }
+    ];
+    el.innerHTML = renderQuarterTable('Low End Lineup — Quarterly View', rows, false);
+  })();
+
+  // ── QB Free Quarterly (FY27 only) ──
+  (function() {
+    const el = document.getElementById('qbfree-quarterly');
+    if (!el) return;
+    const qs = QQ.map((_, qi) => ({
+      signups: sumQ(qbFree.signups, qi),
+      gns: sumQ(qbFree.gns, qi),
+      gna: sumQ(qbFree.gna, qi),
+      mau: eofQ(qbFree.mau, qi)
+    }));
+    const fy = {
+      signups: qbFree.signups.reduce((s,v)=>s+v,0),
+      gns: qbFree.gns.reduce((s,v)=>s+v,0),
+      gna: qbFree.gna.reduce((s,v)=>s+v,0),
+      mau: qbFree.mau[11]
+    };
+
+    function qoq(arr, qi) {
+      if (qi === 0) return null;
+      const prev = arr[qi-1], curr = arr[qi];
+      return prev && prev !== 0 ? (curr/prev - 1) : null;
+    }
+
+    const qSignups = qs.map(q=>q.signups), qGns = qs.map(q=>q.gns), qGna = qs.map(q=>q.gna), qMau = qs.map(q=>q.mau);
+
+    let html = `<h3 style="margin:0 0 12px">QB Free — Quarterly View (FY27)</h3>
+      <div class="table-scroll"><table class="qtable">
+      <thead><tr>
+        <th>Metric</th><th></th>
+        <th class="fy27-q">Q1<br><span style="font-size:9px;font-weight:400">Aug-Oct</span></th>
+        <th class="fy27-q">Q2<br><span style="font-size:9px;font-weight:400">Nov-Jan</span></th>
+        <th class="fy27-q">Q3<br><span style="font-size:9px;font-weight:400">Feb-Apr</span></th>
+        <th class="fy27-q">Q4<br><span style="font-size:9px;font-weight:400">May-Jul</span></th>
+        <th class="fy27-total">FY27</th>
+      </tr></thead><tbody>`;
+
+    const freeRows = [
+      { label:'Signups', note:'flow, cumul.', vals: qSignups, total: fy.signups, fmt: fmtK, up: true },
+      { label:'MAU', note:'stock, EoQ', vals: qMau, total: fy.mau, fmt: fmtK, up: true },
+      { label:'GNS', note:'flow, cumul.', vals: qGns, total: fy.gns, fmt: v=>fmtK(v), up: true },
+      { label:'GNA', note:'flow, cumul.', vals: qGna, total: fy.gna, fmt: v=>fmtK(v), up: true }
+    ];
+
+    freeRows.forEach(r => {
+      html += `<tr><td>${r.label}</td><td style="font-size:10px;color:var(--muted)">${r.note}</td>`;
+      r.vals.forEach((v,qi) => {
+        const q = qoq(r.vals, qi);
+        const qLabel = q != null ? `<span class="qoq-label ${q>0?'pos':'neg'}">${q>0?'+':''}${Math.round(q*100)}% QoQ</span>` : '';
+        html += `<td class="fy27-q">${r.fmt(v)}${qLabel}</td>`;
+      });
+      html += `<td class="fy27-total">${r.fmt(r.total)}</td></tr>`;
+    });
+
+    html += `</tbody></table></div>`;
+    el.innerHTML = html;
+  })();
+
+  function renderQuarterTable(title, rows, hasChannel) {
+    const qLabels = [
+      'Q1<br><span style="font-size:9px;font-weight:400">Aug-Oct</span>',
+      'Q2<br><span style="font-size:9px;font-weight:400">Nov-Jan</span>',
+      'Q3<br><span style="font-size:9px;font-weight:400">Feb-Apr</span>',
+      'Q4<br><span style="font-size:9px;font-weight:400">May-Jul</span>',
+      'Full&nbsp;Year'
+    ];
+    const chHeader = hasChannel ? '<th rowspan="2" style="text-align:left">Channel</th>' : '';
+    let html = `<h3 style="margin:0 0 12px">${title}</h3>
+    <div class="table-scroll"><table class="qtable">
+    <thead>
+      <tr>
+        <th rowspan="2">Metric</th>${chHeader}
+        ${qLabels.map((q,i) => `<th colspan="3" class="q-start" style="text-align:center;border-bottom:none${i===4?';background:#E8F0FF':''}">${q}</th>`).join('')}
+      </tr>
+      <tr>
+        ${Array(5).fill(0).map((_,i) => `<th class="q-start${i===4?' fy-total':''}">FY26</th><th class="fy27-q">FY27</th><th class="yoy">YoY</th>`).join('')}
+      </tr>
+    </thead>
+    <tbody>`;
+
+    function yoyTd(v26, v27, isChurn, higherBetter, extraClass) {
+      const ec = extraClass || '';
+      if (v26 != null && v26 !== 0 && v27 != null) {
+        if (isChurn) {
+          // values stored negative; show change in absolute churn rate
+          // pp = |v26| - |v27| = -(v27 - v26) = v26 - v27
+          const pp = v26 - v27;
+          const good = pp < 0; // churn rate decreased = good
+          return `<td class="yoy ${good?'pos':'neg'}${ec}">${pp>0?'+':''}${pp.toFixed(1)}pp</td>`;
+        }
+        const ratio = v27/v26-1;
+        const good = higherBetter ? ratio>0 : ratio<0;
+        return `<td class="yoy ${good?'pos':'neg'}${ec}">${ratio>0?'+':''}${Math.round(ratio*100)}%</td>`;
+      }
+      return `<td class="yoy${ec}">—</td>`;
+    }
+
+    rows.forEach(r => {
+      const chCell = hasChannel
+        ? `<td style="${r.indent?'padding-left:20px;':''}color:var(--muted);font-size:11px">${r.channel}</td>`
+        : '';
+      const lblCell = `<td style="font-weight:${r.indent?'400':'600'};color:${r.indent?'var(--muted)':'var(--navy)'}">${r.label}</td>`;
+
+      let cells = '';
+      for (let qi = 0; qi < 4; qi++) {
+        const v26 = r.fy26q[qi], v27 = r.fy27q[qi];
+        cells += `<td class="q-start">${r.fmt(v26)}</td>`;
+        cells += `<td class="fy27-q">${r.fmt(v27)}</td>`;
+        cells += yoyTd(v26, v27, r.isChurn, r.higherBetter, '');
+      }
+      cells += `<td class="q-start fy-total">${r.fmt(r.fy26fy)}</td>`;
+      cells += `<td class="fy27-total">${r.fmt(r.fy27fy)}</td>`;
+      cells += yoyTd(r.fy26fy, r.fy27fy, r.isChurn, r.higherBetter, ' fy-total');
+
+      html += `<tr>${lblCell}${chCell}${cells}</tr>`;
+    });
+
+    html += `</tbody></table></div>`;
+    return html;
+  }
+}
 </script>
 </body>
 </html>
