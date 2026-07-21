@@ -236,14 +236,13 @@
     .qtable { width:100%; border-collapse:collapse; font-size:12px; }
     .qtable th { background:#E8EBF0; color:#1A1D23; font-weight:700; padding:6px 8px; text-align:right; white-space:nowrap; border-bottom:1px solid #C8CDD8; }
     .qtable th:first-child { text-align:left; }
-    .qtable th.fy27-q, .qtable th.fy27-total { background:#D8E4FF; }
+    .qtable th.fy27-q { background:#EBF4FF; }
     .qtable td { padding:5px 8px; text-align:right; border-bottom:1px solid #F0F2F5; vertical-align:top; background:#fff; }
     .qtable td:first-child { text-align:left; font-weight:600; color:var(--navy); }
-    .qtable .fy27-q { background:#F4F8FF; }
-    .qtable .fy-total { font-weight:700; background:#F5F7FA; }
-    .qtable .fy27-total { background:#EEF3FF; font-weight:700; border-left:2px solid #236CFF; }
-    .qtable .q-start { border-left:2px solid #D4D9E5; }
-    .qtable th.q-start { border-left:2px solid #BEC6D5; }
+    .qtable td.fy27-q { background:#EBF4FF; }
+    .qtable .fy-total { font-weight:700; }
+    .qtable .sect-border { border-left:2px solid #B4C6DC; }
+    .qtable th.sect-border { border-left:2px solid #9FB5CC; }
     .qtable .yoy { font-size:11px; font-weight:600; }
     .qtable .pos { color:#00A650; } .qtable .neg { color:#D52B1E; }
     .qoq-label { font-size:9px; display:block; margin-top:2px; font-weight:600; }
@@ -2650,35 +2649,43 @@ function buildAllQuarterlyTables() {
   })();
 
   function renderQuarterTable(title, rows, hasChannel) {
-    const qLabels = [
+    const ql = [
       'Q1<br><span style="font-size:9px;font-weight:400">Aug-Oct</span>',
       'Q2<br><span style="font-size:9px;font-weight:400">Nov-Jan</span>',
       'Q3<br><span style="font-size:9px;font-weight:400">Feb-Apr</span>',
       'Q4<br><span style="font-size:9px;font-weight:400">May-Jul</span>',
-      'Full&nbsp;Year'
+      'Full Year'
     ];
     const chHeader = hasChannel ? '<th rowspan="2" style="text-align:left">Channel</th>' : '';
+
+    function thCls(...classes) {
+      const c = classes.filter(Boolean).join(' ');
+      return c ? ` class="${c}"` : '';
+    }
+
     let html = `<h3 style="margin:0 0 12px">${title}</h3>
     <div class="table-scroll"><table class="qtable">
     <thead>
       <tr>
         <th rowspan="2">Metric</th>${chHeader}
-        ${qLabels.map((q,i) => `<th colspan="3" class="q-start" style="text-align:center;border-bottom:none${i===4?';background:#E8F0FF':''}">${q}</th>`).join('')}
+        <th colspan="5" style="text-align:center;border-bottom:none">FY26 (Actuals)</th>
+        <th colspan="5" class="fy27-q sect-border" style="text-align:center;border-bottom:none">FY27 (Fcst)</th>
+        <th colspan="5" class="sect-border" style="text-align:center;border-bottom:none;color:var(--muted)">YoY</th>
       </tr>
       <tr>
-        ${Array(5).fill(0).map((_,i) => `<th class="q-start${i===4?' fy-total':''}">FY26</th><th class="fy27-q">FY27</th><th class="yoy">YoY</th>`).join('')}
+        ${ql.map((q,i) => `<th${thCls(i===4?'fy-total':'')}>${q}</th>`).join('')}
+        ${ql.map((q,i) => `<th${thCls('fy27-q', i===0?'sect-border':'', i===4?'fy-total':'')}>${q}</th>`).join('')}
+        ${ql.map((q,i) => `<th${thCls(i===0?'sect-border':'', i===4?'fy-total':'')}>${q}</th>`).join('')}
       </tr>
     </thead>
     <tbody>`;
 
     function yoyTd(v26, v27, isChurn, higherBetter, extraClass) {
-      const ec = extraClass || '';
+      const ec = extraClass ? ' ' + extraClass : '';
       if (v26 != null && v26 !== 0 && v27 != null) {
         if (isChurn) {
-          // values stored negative; show change in absolute churn rate
-          // pp = |v26| - |v27| = -(v27 - v26) = v26 - v27
-          const pp = v26 - v27;
-          const good = pp < 0; // churn rate decreased = good
+          const pp = v26 - v27; // change in absolute churn rate (negative of stored delta)
+          const good = pp < 0;
           return `<td class="yoy ${good?'pos':'neg'}${ec}">${pp>0?'+':''}${pp.toFixed(1)}pp</td>`;
         }
         const ratio = v27/v26-1;
@@ -2694,18 +2701,19 @@ function buildAllQuarterlyTables() {
         : '';
       const lblCell = `<td style="font-weight:${r.indent?'400':'600'};color:${r.indent?'var(--muted)':'var(--navy)'}">${r.label}</td>`;
 
-      let cells = '';
-      for (let qi = 0; qi < 4; qi++) {
-        const v26 = r.fy26q[qi], v27 = r.fy27q[qi];
-        cells += `<td class="q-start">${r.fmt(v26)}</td>`;
-        cells += `<td class="fy27-q">${r.fmt(v27)}</td>`;
-        cells += yoyTd(v26, v27, r.isChurn, r.higherBetter, '');
-      }
-      cells += `<td class="q-start fy-total">${r.fmt(r.fy26fy)}</td>`;
-      cells += `<td class="fy27-total">${r.fmt(r.fy27fy)}</td>`;
-      cells += yoyTd(r.fy26fy, r.fy27fy, r.isChurn, r.higherBetter, ' fy-total');
+      // FY26: Q1-Q4 then Full Year
+      const fy26 = r.fy26q.map(v => `<td>${r.fmt(v)}</td>`).join('') +
+                   `<td class="fy-total">${r.fmt(r.fy26fy)}</td>`;
 
-      html += `<tr>${lblCell}${chCell}${cells}</tr>`;
+      // FY27: Q1-Q4 then Full Year (all blue)
+      const fy27 = r.fy27q.map((v,qi) => `<td class="fy27-q${qi===0?' sect-border':''}">${r.fmt(v)}</td>`).join('') +
+                   `<td class="fy27-q fy-total">${r.fmt(r.fy27fy)}</td>`;
+
+      // YoY: Q1-Q4 then Full Year
+      const yoy = r.fy26q.map((v26,qi) => yoyTd(v26, r.fy27q[qi], r.isChurn, r.higherBetter, qi===0?'sect-border':'')).join('') +
+                  yoyTd(r.fy26fy, r.fy27fy, r.isChurn, r.higherBetter, 'fy-total');
+
+      html += `<tr>${lblCell}${chCell}${fy26}${fy27}${yoy}</tr>`;
     });
 
     html += `</tbody></table></div>`;
