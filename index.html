@@ -889,7 +889,7 @@
     <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px">
       <div>
         <h3 style="font-size:13px;font-weight:700;color:var(--navy);margin:0 0 2px">QB Free — Monthly Forecast (Target Pass 3)</h3>
-        <p style="font-size:11px;color:var(--muted);margin:0"><span style="color:#236CFF;font-weight:600">Left axis (blue):</span> Monthly signups (bars) &nbsp;·&nbsp; <span style="color:#00A650;font-weight:600">Right axis (green):</span> GNS (fill) + GNA (dashed) · Tooltip shows GNS/Signup conv. rate · MAU in table below</p>
+        <p style="font-size:11px;color:var(--muted);margin:0"><span style="color:#236CFF;font-weight:600">Left axis:</span> Monthly signups (bars) + MAU EoM (orange line) &nbsp;·&nbsp; <span style="color:#00A650;font-weight:600">Right axis (green):</span> GNS + GNA (dashed) · Tooltip shows GNS/Signup conv. rate</p>
       </div>
       <div style="display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--muted);align-items:center">
         <span style="display:flex;align-items:center;gap:4px"><span style="width:22px;height:3px;background:#236CFF;border-radius:2px;display:inline-block"></span>Signups</span>
@@ -1917,9 +1917,7 @@ function initCharts() {
     });
   })();
 
-  // ── QB Free Chart: Monthly Signups (bars, left) vs GNS + GNA (lines, right) ──
-  // MAU is a month-end stock, not a monthly flow — excluded from this chart to avoid
-  // apples-to-oranges comparison with signup/GNS monthly adds. See table for MAU detail.
+  // ── QB Free Chart: Monthly Signups + MAU (bars/line, left) vs GNS + GNA (lines, right) ──
   makeChart('qbfree-combined-chart', {
     type: 'bar',
     data: {
@@ -1934,6 +1932,19 @@ function initCharts() {
           borderWidth: 1.5,
           borderRadius: 3,
           yAxisID: 'yLeft',
+          order: 4
+        },
+        {
+          type: 'line',
+          label: 'MAU',
+          data: qbFree.mau,
+          borderColor: '#E8821A',
+          backgroundColor: 'transparent',
+          borderWidth: 2,
+          pointRadius: 3,
+          tension: 0.3,
+          fill: false,
+          yAxisID: 'yLeft',
           order: 3
         },
         {
@@ -1941,11 +1952,11 @@ function initCharts() {
           label: 'GNS',
           data: qbFree.gns,
           borderColor: '#00A650',
-          backgroundColor: 'rgba(0,166,80,0.08)',
+          backgroundColor: 'transparent',
           borderWidth: 2.5,
           pointRadius: 3.5,
           tension: 0.3,
-          fill: true,
+          fill: false,
           yAxisID: 'yRight',
           order: 1
         },
@@ -1959,6 +1970,7 @@ function initCharts() {
           pointRadius: 3,
           borderDash: [5,3],
           tension: 0.3,
+          fill: false,
           yAxisID: 'yRight',
           order: 2
         }
@@ -1979,7 +1991,7 @@ function initCharts() {
             },
             afterBody: items => {
               const signup = items.find(i => i.datasetIndex === 0);
-              const gns    = items.find(i => i.datasetIndex === 1);
+              const gns    = items.find(i => i.datasetIndex === 2);
               if (signup && gns && signup.raw > 0) {
                 return [` GNS/Signup rate: ${(gns.raw/signup.raw*100).toFixed(1)}%`];
               }
@@ -1993,8 +2005,8 @@ function initCharts() {
         yLeft: {
           position: 'left',
           beginAtZero: true,
-          title: { display: true, text: 'Monthly Signups', font: { size: 10 }, color: '#236CFF' },
-          ticks: { font: { size: 10 }, color: '#236CFF', callback: v => v >= 1000 ? Math.round(v/1000)+'K' : v },
+          title: { display: true, text: 'Signups / MAU', font: { size: 10 }, color: '#236CFF' },
+          ticks: { font: { size: 10 }, color: '#555', callback: v => v >= 1000 ? Math.round(v/1000)+'K' : v },
           grid: { color: 'rgba(0,0,0,0.05)' }
         },
         yRight: {
